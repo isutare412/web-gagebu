@@ -1,0 +1,25 @@
+spring:
+  application:
+    name: web-gagebu
+
+  profiles:
+    active: default
+
+  threads:
+    virtual:
+      enabled: true
+
+  datasource:
+    url: jdbc:postgresql://localhost:42300/web_gagebu
+    username: admin
+    password: admin123123
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    open-in-view: false
+
+server:
+  port: 8080
