@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="INFO" monitorInterval="30">
+  <Properties>
+    <Property name="LOG_PATTERN">%date{yyyy-MM-dd HH:mm:ss.SSS} {%5p} ${sys:PID} [%15.15threadName] %-32.32class{1.} : %message %mdc%n%exception</Property>
+    <Property name="COLOR_LOG_PATTERN">%style{%date{yyyy-MM-dd HH:mm:ss.SSS}}{dim} %highlight{%5p}{FATAL=red blink, ERROR=red, WARN=yellow, INFO=green, DEBUG=green bold, TRACE=blue} %style{${sys:PID}}{magenta} %style{[%15.15threadName]}{dim} %style{%-32.32class{1.}}{cyan} %style{:}{dim} %message %mdc%n%exception</Property>
+    <Property name="LOG_FILE_PATH">./logs</Property>
+  </Properties>
+
+  <Appenders>
+    <Console name="ConsoleAppender" target="SYSTEM_OUT">
+      <PatternLayout pattern="${LOG_PATTERN}" disableAnsi="false" />
+    </Console>
+    <Console name="ColorAppender" target="SYSTEM_OUT">
+      <PatternLayout pattern="${COLOR_LOG_PATTERN}" />
+    </Console>
+    <Console name="JsonAppender" target="SYSTEM_OUT">
+      <JsonTemplateLayout eventTemplateUri="classpath:log4j2-template.json" stackTraceEnabled="true" />
+    </Console>
+
+    <RollingFile name="RollingFileAppender" fileName="${LOG_FILE_PATH}/application.log" filePattern="${LOG_FILE_PATH}/application-%d{yyyy-MM-dd}-%i.log.gz">
+      <PatternLayout pattern="${LOG_PATTERN}" />
+      <Policies>
+        <TimeBasedTriggeringPolicy interval="1" modulate="true" />
+        <SizeBasedTriggeringPolicy size="10MB" />
+      </Policies>
+      <DefaultRolloverStrategy max="10" />
+    </RollingFile>
+
+  </Appenders>
+
+  <Loggers>
+    <Logger name="me.redshore.web_gagebu" level="INFO" additivity="false">
+      <SpringProfile name="local, default">
+        <AppenderRef ref="ColorAppender" />
+      </SpringProfile>
+      <SpringProfile name="prod">
+        <AppenderRef ref="JsonAppender" />
+      </SpringProfile>
+    </Logger>
+
+    <Root level="INFO">
+      <SpringProfile name="local, default">
+        <AppenderRef ref="ColorAppender" />
+      </SpringProfile>
+      <SpringProfile name="prod">
+        <AppenderRef ref="JsonAppender" />
+      </SpringProfile>
+    </Root>
+  </Loggers>
+</Configuration>

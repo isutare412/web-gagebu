@@ -21,5 +21,8 @@ spring:
     show-sql: false
     open-in-view: false
 
+logging:
+  config: classpath:log4j2-spring.xml
+
 server:
   port: 8080

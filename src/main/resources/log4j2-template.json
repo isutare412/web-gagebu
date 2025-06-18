@@ -1,0 +1,33 @@
+{
+  "timestamp": {
+    "$resolver": "timestamp",
+    "format": "yyyy-MM-dd HH:mm:ss.SSS"
+  },
+  "level": {
+    "$resolver": "level",
+    "field": "name"
+  },
+  "component": "web-gagebu",
+  "thread": {
+    "$resolver": "thread",
+    "field": "name"
+  },
+  "logger": {
+    "$resolver": "logger",
+    "field": "name"
+  },
+  "message": {
+    "$resolver": "message",
+    "stringified": true
+  },
+  "context": {
+    "$resolver": "mdc"
+  },
+  "exception": {
+    "$resolver": "exception",
+    "field": "stackTrace",
+    "stackTrace": {
+      "stringified": true
+    }
+  }
+}
