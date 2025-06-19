@@ -1,0 +1,26 @@
+package me.redshore.web_gagebu.accountbook.invitation;
+
+import java.time.ZonedDateTime;
+import org.springframework.stereotype.Service;
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
+@Service
+@RequiredArgsConstructor
+@Slf4j
+public class InvitationService {
+
+    private final InvitationRepository invitationRepository;
+
+    @Transactional
+    public void cleanUpExpiredInvitations() {
+        var now = ZonedDateTime.now();
+
+        long count = invitationRepository.deleteByExpirationBefore(now);
+        if (count > 0) {
+            log.info("Removed {} expired invitations", count);
+        }
+    }
+
+}
