@@ -17,14 +17,14 @@
       <JsonTemplateLayout eventTemplateUri="classpath:log4j2-template.json" stackTraceEnabled="true" />
     </Console>
 
-    <RollingFile name="RollingFileAppender" fileName="${LOG_FILE_PATH}/application.log" filePattern="${LOG_FILE_PATH}/application-%d{yyyy-MM-dd}-%i.log.gz">
+    <!-- <RollingFile name="RollingFileAppender" fileName="${LOG_FILE_PATH}/application.log" filePattern="${LOG_FILE_PATH}/application-%d{yyyy-MM-dd}-%i.log.gz">
       <PatternLayout pattern="${LOG_PATTERN}" />
       <Policies>
         <TimeBasedTriggeringPolicy interval="1" modulate="true" />
         <SizeBasedTriggeringPolicy size="10MB" />
       </Policies>
       <DefaultRolloverStrategy max="10" />
-    </RollingFile>
+    </RollingFile> -->
 
   </Appenders>
 
