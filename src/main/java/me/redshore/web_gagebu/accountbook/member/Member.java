@@ -1,0 +1,55 @@
+package me.redshore.web_gagebu.accountbook.member;
+
+import java.util.UUID;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Index;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import me.redshore.web_gagebu.accountbook.AccountBook;
+import me.redshore.web_gagebu.user.User;
+
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
+@Entity
+@EntityListeners(AuditingEntityListener.class)
+@Table(
+    name = "members",
+    uniqueConstraints = {
+        @UniqueConstraint(
+            columnNames = {"account_book_id", "user_id"})
+    },
+    indexes = {
+        @Index(columnList = "user_id")
+    })
+public class Member {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
+
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "account_book_id", nullable = false)
+    private AccountBook accountBook;
+
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
+    @Column(length = 16, nullable = false)
+    private MemberRole role;
+
+}
