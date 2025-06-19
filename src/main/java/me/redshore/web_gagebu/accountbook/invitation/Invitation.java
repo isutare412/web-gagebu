@@ -3,6 +3,7 @@ package me.redshore.web_gagebu.accountbook.invitation;
 import java.time.ZonedDateTime;
 import java.util.UUID;
 import io.micrometer.common.lang.Nullable;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -12,15 +13,12 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import me.redshore.web_gagebu.accountbook.AccountBook;
 
-@AllArgsConstructor
-@NoArgsConstructor
-@Getter
-@Setter
 @Entity
 @Table(
     name = "invitations",
@@ -28,6 +26,11 @@ import me.redshore.web_gagebu.accountbook.AccountBook;
         @Index(columnList = "expiration"),
         @Index(columnList = "account_book_id")
     })
+@NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
+@AllArgsConstructor
+@Builder
+@Getter
+@Setter
 public class Invitation {
 
     @Id
@@ -38,6 +41,7 @@ public class Invitation {
     @JoinColumn(name = "account_book_id", nullable = false)
     private AccountBook accountBook;
 
+    @Column(nullable = true)
     private @Nullable ZonedDateTime expiration;
 
 }

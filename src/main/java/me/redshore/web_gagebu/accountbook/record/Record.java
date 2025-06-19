@@ -3,12 +3,8 @@ package me.redshore.web_gagebu.accountbook.record;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.UUID;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EntityListeners;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -16,6 +12,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -25,17 +23,16 @@ import me.redshore.web_gagebu.accountbook.AccountBook;
 import me.redshore.web_gagebu.accountbook.Category;
 import me.redshore.web_gagebu.user.User;
 
-@AllArgsConstructor
-@NoArgsConstructor
-@Getter
-@Setter
 @Entity
-@EntityListeners(AuditingEntityListener.class)
 @Table(
     name = "records",
     indexes = {
         @Index(columnList = "account_book_id, date, created_at")
     })
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
 public class Record {
 
     @Id
@@ -69,12 +66,21 @@ public class Record {
     @Column(nullable = false)
     private LocalDate date;
 
-    @CreatedDate
     @Column(nullable = false)
     private ZonedDateTime createdAt;
 
-    @LastModifiedDate
     @Column(nullable = false)
     private ZonedDateTime updatedAt;
+
+    @PrePersist
+    void prePersist() {
+        this.createdAt = ZonedDateTime.now();
+        this.updatedAt = ZonedDateTime.now();
+    }
+
+    @PreUpdate
+    void preUpdate() {
+        this.updatedAt = ZonedDateTime.now();
+    }
 
 }

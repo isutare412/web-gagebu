@@ -1,10 +1,8 @@
 package me.redshore.web_gagebu.accountbook.member;
 
 import java.util.UUID;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -20,12 +18,7 @@ import lombok.Setter;
 import me.redshore.web_gagebu.accountbook.AccountBook;
 import me.redshore.web_gagebu.user.User;
 
-@AllArgsConstructor
-@NoArgsConstructor
-@Getter
-@Setter
 @Entity
-@EntityListeners(AuditingEntityListener.class)
 @Table(
     name = "members",
     uniqueConstraints = {
@@ -35,6 +28,10 @@ import me.redshore.web_gagebu.user.User;
     indexes = {
         @Index(columnList = "user_id")
     })
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
 public class Member {
 
     @Id
