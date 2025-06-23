@@ -25,7 +25,7 @@ import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.security.SignatureException;
 import lombok.extern.slf4j.Slf4j;
-import me.redshore.web_gagebu.config.properties.AuthProperties;
+import me.redshore.web_gagebu.common.config.properties.AuthProperties;
 import me.redshore.web_gagebu.user.dto.UserJwtPayload;
 
 @Component

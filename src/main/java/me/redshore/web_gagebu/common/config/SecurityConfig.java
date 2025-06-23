@@ -1,4 +1,4 @@
-package me.redshore.web_gagebu.config;
+package me.redshore.web_gagebu.common.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

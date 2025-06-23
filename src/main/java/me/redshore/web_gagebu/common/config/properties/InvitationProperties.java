@@ -1,4 +1,4 @@
-package me.redshore.web_gagebu.config.properties;
+package me.redshore.web_gagebu.common.config.properties;
 
 import java.time.Duration;
 import org.springframework.boot.context.properties.ConfigurationProperties;

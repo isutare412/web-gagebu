@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
-import me.redshore.web_gagebu.config.SecurityConfig;
+import me.redshore.web_gagebu.common.config.SecurityConfig;
 
 @Component
 @Slf4j

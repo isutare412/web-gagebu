@@ -3,7 +3,7 @@ package me.redshore.web_gagebu.accountbook.invitation;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import lombok.RequiredArgsConstructor;
-import me.redshore.web_gagebu.config.properties.InvitationProperties;
+import me.redshore.web_gagebu.common.config.properties.InvitationProperties;
 
 @Component
 @RequiredArgsConstructor
