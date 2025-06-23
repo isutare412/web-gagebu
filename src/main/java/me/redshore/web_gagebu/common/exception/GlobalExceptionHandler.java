@@ -4,6 +4,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 import lombok.extern.slf4j.Slf4j;
 
 @RestControllerAdvice
@@ -18,6 +19,20 @@ public class GlobalExceptionHandler {
             .statusText(httpStatus.getReasonPhrase())
             .errorCode(ex.getErrorCode())
             .message(ex.getMessage())
+            .build();
+
+        logErrorResponse(httpStatus, ex);
+        return new ResponseEntity<>(errorResponse, httpStatus);
+    }
+
+    @ExceptionHandler(NoResourceFoundException.class)
+    public ResponseEntity<ErrorResponse> handleAppBaseException(NoResourceFoundException ex) {
+        var httpStatus = HttpStatus.NOT_FOUND;
+        var errorResponse = ErrorResponse.builder()
+            .status(httpStatus.value())
+            .statusText(httpStatus.getReasonPhrase())
+            .errorCode(ErrorCode.RESOURCE_NOT_FOUND)
+            .message("Resource not found")
             .build();
 
         logErrorResponse(httpStatus, ex);
