@@ -30,7 +30,7 @@
 
   <Loggers>
     <Logger name="me.redshore.web_gagebu" level="INFO" additivity="false">
-      <SpringProfile name="local, default">
+      <SpringProfile name="local, dev, default">
         <AppenderRef ref="ColorAppender" />
       </SpringProfile>
       <SpringProfile name="prod">
@@ -39,7 +39,7 @@
     </Logger>
 
     <Root level="INFO">
-      <SpringProfile name="local, default">
+      <SpringProfile name="local, dev, default">
         <AppenderRef ref="ColorAppender" />
       </SpringProfile>
       <SpringProfile name="prod">

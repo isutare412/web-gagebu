@@ -9,17 +9,39 @@ spring:
     virtual:
       enabled: true
 
+  mvc:
+    log-resolved-exception: false
+
   datasource:
     url: jdbc:postgresql://localhost:42300/web_gagebu
     username: admin
     password: admin123123
     driver-class-name: org.postgresql.Driver
 
+  data:
+    redis:
+      host: localhost
+      password: r3d1s
+      port: 42400
+
   jpa:
     hibernate:
       ddl-auto: update
     show-sql: false
     open-in-view: false
+
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: <GOOGLE_CLIENT_ID>
+            client-secret: <GOOGLE_CLIENT_SECRET>
+            redirect-uri: "{baseUrl}/api/v1/oauth2/code/google"
+            scope:
+              - openid
+              - profile
+              - email
 
 logging:
   config: classpath:log4j2-spring.xml
@@ -28,6 +50,14 @@ server:
   port: 8080
 
 app:
+  auth:
+    jwt:
+      private-key: |
+        <PKCS8_PRIVATE_KEY>
+      public-key: |
+        <PUBLIC_KEY>
+      expiration: 1d
+
   invitation:
     cleanup:
       rate: 5m
