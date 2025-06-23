@@ -1,6 +1,6 @@
 package me.redshore.web_gagebu.config;
 
-import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -14,7 +14,7 @@ public class InMemorySessionConfig {
 
     @Bean
     MapSessionRepository sessionRepository() {
-        return new MapSessionRepository(new HashMap<>());
+        return new MapSessionRepository(new ConcurrentHashMap<>());
     }
 
 }
