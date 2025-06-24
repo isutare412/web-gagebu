@@ -6,6 +6,8 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.logout.CookieClearingLogoutHandler;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import me.redshore.web_gagebu.auth.CustomBearerTokenResolver;
 import me.redshore.web_gagebu.auth.CustomOidcUserService;
@@ -20,6 +22,7 @@ public class SecurityConfig {
 
     public static final String AUTHZ_BASE_URI = "/api/v1/oauth2/authorization";
     public static final String CODE_BASE_URI = "/api/v1/oauth2/code";
+    public static final String LOGOUT_URI = "/api/v1/logout";
 
     private final OidcRequestResolver oidcRequestResolver;
 
@@ -53,11 +56,18 @@ public class SecurityConfig {
             .oauth2ResourceServer(server -> server
                 .jwt(jwt -> jwt
                     .decoder(jwtProvider))
-                .bearerTokenResolver(bearerTokenResolver));
+                .bearerTokenResolver(bearerTokenResolver))
+            .logout(logout -> logout
+                .logoutUrl(LOGOUT_URI)
+                .addLogoutHandler(new CookieClearingLogoutHandler(
+                    OidcSuccessHandler.TOKEN_COOKIE_NAME))
+                .logoutSuccessHandler((requrest, response, authentication) -> response
+                    .setStatus(HttpServletResponse.SC_OK)));
 
         http
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/v1/oauth2/**").permitAll()
+                .requestMatchers("/api/*/oauth2/**").permitAll()
+                .requestMatchers("/api/*/logout").permitAll()
                 .requestMatchers("/api/**").authenticated()
                 .anyRequest().permitAll());
 

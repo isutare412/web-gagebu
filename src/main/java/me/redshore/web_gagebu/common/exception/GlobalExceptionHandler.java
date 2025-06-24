@@ -35,7 +35,6 @@ public class GlobalExceptionHandler {
             .message(ex.getMessage())
             .build();
 
-        logErrorResponse(httpStatus, ex);
         return new ResponseEntity<>(errorResponse, httpStatus);
     }
 
@@ -76,8 +75,7 @@ public class GlobalExceptionHandler {
         if (httpStatus.is4xxClientError()) {
             log.warn(String.format("4xx client error occurred: %d %s - %s",
                                    httpStatus.value(), httpStatus.getReasonPhrase(),
-                                   ex.getMessage()),
-                     ex);
+                                   ex.getMessage()));
         } else if (httpStatus.is5xxServerError()) {
             log.error(String.format("5xx server error occurred: %d %s - %s",
                                     httpStatus.value(), httpStatus.getReasonPhrase(),
