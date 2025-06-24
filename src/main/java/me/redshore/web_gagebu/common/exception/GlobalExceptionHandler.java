@@ -26,13 +26,32 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(NoResourceFoundException.class)
-    public ResponseEntity<ErrorResponse> handleAppBaseException(NoResourceFoundException ex) {
+    public ResponseEntity<ErrorResponse> handlNoResourceFoundException(NoResourceFoundException ex) {
         var httpStatus = HttpStatus.NOT_FOUND;
         var errorResponse = ErrorResponse.builder()
             .status(httpStatus.value())
             .statusText(httpStatus.getReasonPhrase())
             .errorCode(ErrorCode.RESOURCE_NOT_FOUND)
-            .message("Resource not found")
+            .message(ex.getMessage())
+            .build();
+
+        logErrorResponse(httpStatus, ex);
+        return new ResponseEntity<>(errorResponse, httpStatus);
+    }
+
+    @ExceptionHandler(UnsupportedOperationException.class)
+    public ResponseEntity<ErrorResponse> handleUnsupportedOperationException(UnsupportedOperationException ex) {
+        var message = ex.getMessage();
+        if (message == null || message.isBlank()) {
+            message = "This operation is not supported";
+        }
+
+        var httpStatus = HttpStatus.NOT_IMPLEMENTED;
+        var errorResponse = ErrorResponse.builder()
+            .status(httpStatus.value())
+            .statusText(httpStatus.getReasonPhrase())
+            .errorCode(ErrorCode.NOT_IMPLEMENTED)
+            .message(message)
             .build();
 
         logErrorResponse(httpStatus, ex);

@@ -5,17 +5,55 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import io.swagger.v3.core.converter.AnnotatedType;
 import io.swagger.v3.core.converter.ModelConverters;
+import io.swagger.v3.oas.models.Components;
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.media.Content;
 import io.swagger.v3.oas.models.media.MediaType;
 import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.responses.ApiResponse;
+import io.swagger.v3.oas.models.security.SecurityScheme;
+import me.redshore.web_gagebu.auth.OidcSuccessHandler;
 import me.redshore.web_gagebu.common.exception.ErrorResponse;
 
 @Configuration
 public class OpenApiConfig {
 
+    public static final String BEARER_TOKEN_AUTH = "bearerTokenAuth";
+
+    public static final String COOKIE_TOKEN_AUTH = "cookieTokenAuth";
+
+    @Bean
+    OpenAPI customOpenApi() {
+        return new OpenAPI()
+            .components(new Components()
+                .addSecuritySchemes(BEARER_TOKEN_AUTH, new SecurityScheme()
+                    .type(SecurityScheme.Type.HTTP)
+                    .scheme("bearer")
+                    .bearerFormat("JWT"))
+                .addSecuritySchemes(COOKIE_TOKEN_AUTH, new SecurityScheme()
+                    .type(SecurityScheme.Type.APIKEY)
+                    .in(SecurityScheme.In.COOKIE)
+                    .name(OidcSuccessHandler.TOKEN_COOKIE_NAME)))
+            .info(new Info()
+                .title("Web Gagebu API")
+                .version("0.1.0"));
+    }
+
     @Bean
     OpenApiCustomizer openApiCustomizer() {
+        return openApi -> {
+            addDefaultErrorResponse(openApi);
+        };
+    }
+
+    private void addDefaultErrorResponse(OpenAPI openApi) {
+        // Register ErrorResponse schema
+        var errorResponseSchema = ModelConverters.getInstance()
+            .resolveAsResolvedSchema(new AnnotatedType(ErrorResponse.class)).schema;
+        openApi.getComponents().addSchemas("ErrorResponse", errorResponseSchema);
+
+        // Create default error response
         var errorApiResponse = new ApiResponse()
             .description("Error response")
             .content(new Content()
@@ -23,19 +61,12 @@ public class OpenApiConfig {
                               new MediaType().schema(new Schema<>()
                                   .$ref("#/components/schemas/ErrorResponse"))));
 
-        return openApi -> {
-            // Register ErrorResponse schema
-            var errorResponseSchema = ModelConverters.getInstance()
-                .resolveAsResolvedSchema(new AnnotatedType(ErrorResponse.class)).schema;
-            openApi.getComponents().addSchemas("ErrorResponse", errorResponseSchema);
-
-            // Add default error response to all operations
-            openApi.getPaths().values().forEach(pathItem -> {
-                pathItem.readOperations().forEach(operation -> {
-                    operation.getResponses().addApiResponse("default", errorApiResponse);
-                });
+        // Add default error response to all operations
+        openApi.getPaths().values().forEach(pathItem -> {
+            pathItem.readOperations().forEach(operation -> {
+                operation.getResponses().addApiResponse("default", errorApiResponse);
             });
-        };
+        });
     }
 
 }

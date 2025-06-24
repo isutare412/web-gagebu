@@ -18,6 +18,11 @@ public enum ErrorCode {
     /**
      * 500 Internal Server Error
      */
-    INTERNAL_SERVER_ERROR;
+    INTERNAL_SERVER_ERROR,
+
+    /**
+     * 501 Not Implemented
+     */
+    NOT_IMPLEMENTED;
 
 }
