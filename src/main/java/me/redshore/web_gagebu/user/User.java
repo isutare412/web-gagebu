@@ -1,7 +1,11 @@
 package me.redshore.web_gagebu.user;
 
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 import io.micrometer.common.lang.Nullable;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -33,8 +37,9 @@ public class User {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(length = 16, nullable = false)
-    private Role role;
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(columnDefinition = "jsonb", nullable = false)
+    private List<Role> roles = new ArrayList<>();
 
     @Column(length = 64, nullable = false)
     private String nickname;
@@ -58,6 +63,14 @@ public class User {
 
     @Column(nullable = false)
     private ZonedDateTime updatedAt;
+
+    public boolean addRole(Role role) {
+        if (!this.roles.contains(role)) {
+            this.roles.add(role);
+            return true;
+        }
+        return false;
+    }
 
     @PrePersist
     void prePersist() {

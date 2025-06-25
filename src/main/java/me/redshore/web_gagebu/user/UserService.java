@@ -40,7 +40,7 @@ public class UserService {
 
     private User createUser(UserOidcUpsertCommand command) {
         var user = this.userMapper.toEntity(command);
-        user.setRole(Role.USER);
+        user.addRole(Role.USER);
         return user;
     }
 

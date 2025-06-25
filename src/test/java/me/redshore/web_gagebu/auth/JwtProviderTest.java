@@ -2,6 +2,7 @@ package me.redshore.web_gagebu.auth;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import java.util.List;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -9,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import me.redshore.web_gagebu.user.IdpType;
+import me.redshore.web_gagebu.user.Role;
 import me.redshore.web_gagebu.user.dto.UserJwtPayload;
 
 @SpringBootTest
@@ -34,6 +36,7 @@ public class JwtProviderTest {
             void setUp() {
                 userJwtPayload = UserJwtPayload.builder()
                     .id(UUID.randomUUID())
+                    .roles(List.of(Role.USER))
                     .nickname("testuser")
                     .idpType(IdpType.GOOGLE)
                     .idpIdentifier("google-id-12345")
@@ -60,6 +63,7 @@ public class JwtProviderTest {
             void setUp() {
                 samplePayload = UserJwtPayload.builder()
                     .id(UUID.randomUUID())
+                    .roles(List.of(Role.USER))
                     .nickname("testuser")
                     .idpType(IdpType.GOOGLE)
                     .idpIdentifier("google-id-12345")
@@ -91,6 +95,7 @@ public class JwtProviderTest {
             void setUp() {
                 samplePayload = UserJwtPayload.builder()
                     .id(UUID.randomUUID())
+                    .roles(List.of(Role.USER))
                     .nickname("testuser")
                     .idpType(IdpType.GOOGLE)
                     .idpIdentifier("google-id-12345")

@@ -1,8 +1,8 @@
 package me.redshore.web_gagebu.auth;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -19,12 +19,15 @@ public class JwtConverter extends JwtAuthenticationConverter {
     }
 
     private static Collection<GrantedAuthority> getAuthoritiesFromJwt(Jwt jwt) {
-        var role = jwt.getClaimAsString(UserJwtPayload.ROLE_CLAIM_KEY);
-        if (role == null) {
-            return Collections.emptyList();
+        var roles = jwt.getClaimAsStringList(UserJwtPayload.ROLES_CLAIM_KEY);
+        if (roles == null) {
+            return List.of();
         }
 
-        return List.of(new SimpleGrantedAuthority("ROLE_" + role.toUpperCase()));
+        return roles.stream()
+            .filter(role -> role != null)
+            .map(role -> new SimpleGrantedAuthority("ROLE_" + role.toUpperCase()))
+            .collect(Collectors.toList());
     }
 
 }
