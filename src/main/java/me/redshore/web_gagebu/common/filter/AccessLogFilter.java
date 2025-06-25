@@ -1,6 +1,7 @@
 package me.redshore.web_gagebu.common.filter;
 
 import java.io.IOException;
+import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
@@ -12,7 +13,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 
 @Component
-@Order(2)
+@Order(Ordered.HIGHEST_PRECEDENCE + 200)
 @Slf4j
 public class AccessLogFilter extends OncePerRequestFilter {
 
@@ -44,7 +45,7 @@ public class AccessLogFilter extends OncePerRequestFilter {
                 .addKeyValue("responseContentLength", responseContentLength)
                 .addKeyValue("status", response.getStatus())
                 .addKeyValue("elapsedMillis", elapsedMillis)
-                .log("HTTP request completed");
+                .log("Handled http request");
         }
     }
 
