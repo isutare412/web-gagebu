@@ -91,14 +91,18 @@ public class GlobalExceptionHandler {
 
     private static void logErrorResponse(HttpStatus httpStatus, Exception ex) {
         if (httpStatus.is4xxClientError()) {
-            log.warn(String.format("[%s] %d %s error occurred: %s",
-                                   ex.getClass().getSimpleName(), httpStatus.value(),
-                                   httpStatus.getReasonPhrase(), ex.getMessage()));
+            log.atWarn()
+                .addKeyValue("exception", ex.getClass().getSimpleName())
+                .addKeyValue("status", httpStatus.value())
+                .addKeyValue("statusText", httpStatus.getReasonPhrase())
+                .log("4xx error occurred");
         } else if (httpStatus.is5xxServerError()) {
-            log.error(String.format("[%s] %d %s error occurred: %s",
-                                    ex.getClass().getSimpleName(), httpStatus.value(),
-                                    httpStatus.getReasonPhrase(), ex.getMessage()),
-                      ex);
+            log.atError()
+                .addKeyValue("exception", ex.getClass().getSimpleName())
+                .addKeyValue("status", httpStatus.value())
+                .addKeyValue("statusText", httpStatus.getReasonPhrase())
+                .setCause(ex)
+                .log("5xx error occurred");
         }
     }
 
