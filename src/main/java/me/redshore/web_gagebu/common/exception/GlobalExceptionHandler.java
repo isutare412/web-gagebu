@@ -2,8 +2,11 @@ package me.redshore.web_gagebu.common.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 import lombok.extern.slf4j.Slf4j;
 
@@ -13,13 +16,9 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(AppBaseException.class)
     public ResponseEntity<ErrorResponse> handleAppBaseException(AppBaseException ex) {
-        var httpStatus = ex.getHttpStatus();
-        var errorResponse = ErrorResponse.builder()
-            .status(httpStatus.value())
-            .statusText(httpStatus.getReasonPhrase())
-            .errorCode(ex.getErrorCode())
-            .message(ex.getMessage())
-            .build();
+        var errorCode = ex.getErrorCode();
+        var errorResponse = new ErrorResponse(errorCode, ex.getMessage());
+        var httpStatus = errorCode.toHttpStatus();
 
         logErrorResponse(httpStatus, ex);
         return new ResponseEntity<>(errorResponse, httpStatus);
@@ -28,13 +27,40 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(NoResourceFoundException.class)
     public ResponseEntity<ErrorResponse> handlNoResourceFoundException(NoResourceFoundException ex) {
         var httpStatus = HttpStatus.NOT_FOUND;
-        var errorResponse = ErrorResponse.builder()
-            .status(httpStatus.value())
-            .statusText(httpStatus.getReasonPhrase())
-            .errorCode(ErrorCode.RESOURCE_NOT_FOUND)
-            .message(ex.getMessage())
-            .build();
+        var errorCode = ErrorCode.ofHttpStatus(httpStatus);
+        var errorResponse = new ErrorResponse(errorCode, ex.getMessage());
 
+        logErrorResponse(httpStatus, ex);
+        return new ResponseEntity<>(errorResponse, httpStatus);
+    }
+
+    @ExceptionHandler(HttpStatusCodeException.class)
+    public ResponseEntity<ErrorResponse> handleHttpStatusCodeException(HttpStatusCodeException ex) {
+        var httpStatus = toHttpStatus(ex.getStatusCode().value());
+        var errorCode = ErrorCode.ofHttpStatus(httpStatus);
+        var errorResponse = new ErrorResponse(errorCode, ex.getMessage());
+
+        logErrorResponse(httpStatus, ex);
+        return new ResponseEntity<>(errorResponse, httpStatus);
+    }
+
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<ErrorResponse> handleAuthenticationException(AuthenticationException ex) {
+        var httpStatus = HttpStatus.UNAUTHORIZED;
+        var errorCode = ErrorCode.ofHttpStatus(httpStatus);
+        var errorResponse = new ErrorResponse(errorCode, ex.getMessage());
+
+        logErrorResponse(httpStatus, ex);
+        return new ResponseEntity<>(errorResponse, httpStatus);
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ErrorResponse> handleAccessDeniedException(AccessDeniedException ex) {
+        var httpStatus = HttpStatus.FORBIDDEN;
+        var errorCode = ErrorCode.ofHttpStatus(httpStatus);
+        var errorResponse = new ErrorResponse(errorCode, ex.getMessage());
+
+        logErrorResponse(httpStatus, ex);
         return new ResponseEntity<>(errorResponse, httpStatus);
     }
 
@@ -46,12 +72,8 @@ public class GlobalExceptionHandler {
         }
 
         var httpStatus = HttpStatus.NOT_IMPLEMENTED;
-        var errorResponse = ErrorResponse.builder()
-            .status(httpStatus.value())
-            .statusText(httpStatus.getReasonPhrase())
-            .errorCode(ErrorCode.NOT_IMPLEMENTED)
-            .message(message)
-            .build();
+        var errorCode = ErrorCode.ofHttpStatus(httpStatus);
+        var errorResponse = new ErrorResponse(errorCode, ex.getMessage());
 
         logErrorResponse(httpStatus, ex);
         return new ResponseEntity<>(errorResponse, httpStatus);
@@ -60,12 +82,8 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleAllUncaughtException(Exception ex) {
         var httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
-        var errorResponse = ErrorResponse.builder()
-            .status(httpStatus.value())
-            .statusText(httpStatus.getReasonPhrase())
-            .errorCode(ErrorCode.INTERNAL_SERVER_ERROR)
-            .message("An unexpected error occurred")
-            .build();
+        var errorCode = ErrorCode.ofHttpStatus(httpStatus);
+        var errorResponse = new ErrorResponse(errorCode, ex.getMessage());
 
         logErrorResponse(httpStatus, ex);
         return new ResponseEntity<>(errorResponse, httpStatus);
@@ -82,6 +100,19 @@ public class GlobalExceptionHandler {
                                     ex.getMessage()),
                       ex);
         }
+    }
+
+    private static HttpStatus toHttpStatus(int statusCode) {
+        HttpStatus httpStatus;
+        try {
+            httpStatus = HttpStatus.valueOf(statusCode);
+        } catch (IllegalArgumentException ex) {
+            log.error("Unexpected http status code: {}. Converting to default status code",
+                      statusCode, ex);
+            httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+
+        return httpStatus;
     }
 
 }

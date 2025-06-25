@@ -9,6 +9,8 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.logout.CookieClearingLogoutHandler;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import me.redshore.web_gagebu.auth.CustomAccessDeniedHandler;
+import me.redshore.web_gagebu.auth.CustomAuthenticationEntryPoint;
 import me.redshore.web_gagebu.auth.CustomBearerTokenResolver;
 import me.redshore.web_gagebu.auth.CustomOidcUserService;
 import me.redshore.web_gagebu.auth.JwtProvider;
@@ -34,16 +36,20 @@ public class SecurityConfig {
 
     private final JwtProvider jwtProvider;
 
+    private final CustomAuthenticationEntryPoint authenticationEntryPoint;
+
+    private final CustomAccessDeniedHandler accessDeniedHandler;
+
     @Bean
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
             .csrf(csrf -> csrf.disable())
             .formLogin(form -> form.disable())
             .httpBasic(basic -> basic.disable())
-
             .sessionManagement(session -> session
-                .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
+                .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED));
 
+        http
             .oauth2Login(oauth2 -> oauth2
                 .authorizationEndpoint(endpoint -> endpoint
                     .baseUri(AUTHZ_BASE_URI)
@@ -62,7 +68,10 @@ public class SecurityConfig {
                 .addLogoutHandler(new CookieClearingLogoutHandler(
                     OidcSuccessHandler.TOKEN_COOKIE_NAME))
                 .logoutSuccessHandler((requrest, response, authentication) -> response
-                    .setStatus(HttpServletResponse.SC_OK)));
+                    .setStatus(HttpServletResponse.SC_OK)))
+            .exceptionHandling(exception -> exception
+                .authenticationEntryPoint(authenticationEntryPoint)
+                .accessDeniedHandler(accessDeniedHandler));
 
         http
             .authorizeHttpRequests(auth -> auth
