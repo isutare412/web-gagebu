@@ -13,6 +13,6 @@ public interface UserMapper {
 
     UserDto toDto(User user);
 
-    UserJwtPayload toJwtPayload(User user);
+    UserJwtPayload toJwtPayload(UserDto user);
 
 }

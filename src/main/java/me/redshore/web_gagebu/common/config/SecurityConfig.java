@@ -13,6 +13,7 @@ import me.redshore.web_gagebu.auth.CustomAccessDeniedHandler;
 import me.redshore.web_gagebu.auth.CustomAuthenticationEntryPoint;
 import me.redshore.web_gagebu.auth.CustomBearerTokenResolver;
 import me.redshore.web_gagebu.auth.CustomOidcUserService;
+import me.redshore.web_gagebu.auth.JwtConverter;
 import me.redshore.web_gagebu.auth.JwtProvider;
 import me.redshore.web_gagebu.auth.OidcRequestResolver;
 import me.redshore.web_gagebu.auth.OidcSuccessHandler;
@@ -34,11 +35,13 @@ public class SecurityConfig {
 
     private final CustomBearerTokenResolver bearerTokenResolver;
 
-    private final JwtProvider jwtProvider;
-
     private final CustomAuthenticationEntryPoint authenticationEntryPoint;
 
     private final CustomAccessDeniedHandler accessDeniedHandler;
+
+    private final JwtProvider jwtProvider;
+
+    private final JwtConverter jwtConverter;
 
     @Bean
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -53,16 +56,17 @@ public class SecurityConfig {
             .oauth2Login(oauth2 -> oauth2
                 .authorizationEndpoint(endpoint -> endpoint
                     .baseUri(AUTHZ_BASE_URI)
-                    .authorizationRequestResolver(oidcRequestResolver))
+                    .authorizationRequestResolver(this.oidcRequestResolver))
                 .redirectionEndpoint(endpoint -> endpoint
                     .baseUri(CODE_BASE_URI + "/*"))
                 .userInfoEndpoint(endpoint -> endpoint
-                    .oidcUserService(oidcUserService))
-                .successHandler(successHandler))
+                    .oidcUserService(this.oidcUserService))
+                .successHandler(this.successHandler))
             .oauth2ResourceServer(server -> server
                 .jwt(jwt -> jwt
-                    .decoder(jwtProvider))
-                .bearerTokenResolver(bearerTokenResolver))
+                    .decoder(this.jwtProvider)
+                    .jwtAuthenticationConverter(this.jwtConverter))
+                .bearerTokenResolver(this.bearerTokenResolver))
             .logout(logout -> logout
                 .logoutUrl(LOGOUT_URI)
                 .addLogoutHandler(new CookieClearingLogoutHandler(
@@ -70,13 +74,14 @@ public class SecurityConfig {
                 .logoutSuccessHandler((requrest, response, authentication) -> response
                     .setStatus(HttpServletResponse.SC_OK)))
             .exceptionHandling(exception -> exception
-                .authenticationEntryPoint(authenticationEntryPoint)
-                .accessDeniedHandler(accessDeniedHandler));
+                .authenticationEntryPoint(this.authenticationEntryPoint)
+                .accessDeniedHandler(this.accessDeniedHandler));
 
         http
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/api/*/oauth2/**").permitAll()
                 .requestMatchers("/api/*/logout").permitAll()
+                .requestMatchers("/api/*/admin/**").hasRole("ADMIN")
                 .requestMatchers("/api/**").authenticated()
                 .anyRequest().permitAll());
 

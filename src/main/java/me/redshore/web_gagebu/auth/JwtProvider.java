@@ -63,6 +63,9 @@ public class JwtProvider implements JwtDecoder {
             .build();
 
         return Jwts.builder()
+            .header()
+            .type("JWT")
+            .and()
             .claims(claims)
             .signWith(this.privateKey)
             .compact();

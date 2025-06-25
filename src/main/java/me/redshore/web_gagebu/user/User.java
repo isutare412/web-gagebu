@@ -33,6 +33,9 @@ public class User {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
+    @Column(length = 16, nullable = false)
+    private Role role;
+
     @Column(length = 64, nullable = false)
     private String nickname;
 

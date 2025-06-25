@@ -8,8 +8,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.redshore.web_gagebu.common.exception.auth.UnexpectedIdpException;
 import me.redshore.web_gagebu.user.IdpType;
-import me.redshore.web_gagebu.user.User;
 import me.redshore.web_gagebu.user.UserService;
+import me.redshore.web_gagebu.user.dto.UserDto;
 import me.redshore.web_gagebu.user.dto.UserOidcUpsertCommand;
 import me.redshore.web_gagebu.user.mapper.UserMapper;
 
@@ -26,18 +26,17 @@ public class CustomOidcUserService extends OidcUserService {
     public OidcUser loadUser(OidcUserRequest userRequest) {
         OidcUser oidcUser = super.loadUser(userRequest);
 
-        User user;
-        switch (userRequest.getClientRegistration().getRegistrationId()) {
-            case "google":
+        UserDto user = switch (userRequest.getClientRegistration().getRegistrationId()) {
+            case "google" -> {
                 var upsertCommand = createGoogleUser(oidcUser);
-                user = this.userService.upsertUser(upsertCommand);
-                break;
-
-            default:
+                yield this.userService.upsertUser(upsertCommand);
+            }
+            default -> {
                 throw new UnexpectedIdpException(
                     String.format("Unsupported OIDC provider: %s",
                                   userRequest.getClientRegistration().getRegistrationId()));
-        }
+            }
+        };
 
         return new CustomOidcUser(oidcUser, userMapper.toJwtPayload(user));
     }

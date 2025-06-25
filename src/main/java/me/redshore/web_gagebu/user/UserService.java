@@ -3,6 +3,7 @@ package me.redshore.web_gagebu.user;
 import org.springframework.stereotype.Service;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import me.redshore.web_gagebu.user.dto.UserDto;
 import me.redshore.web_gagebu.user.dto.UserOidcUpsertCommand;
 import me.redshore.web_gagebu.user.mapper.UserMapper;
 
@@ -15,7 +16,7 @@ public class UserService {
     private final UserRepository userRepository;
 
     @Transactional
-    public User upsertUser(UserOidcUpsertCommand command) {
+    public UserDto upsertUser(UserOidcUpsertCommand command) {
         var optionalUser =
             this.userRepository.findByIdpTypeAndIdpIdentifier(command.idpType(),
                                                               command.idpIdentifier());
@@ -25,15 +26,22 @@ public class UserService {
             user = optionalUser.get();
             mergeUser(user, command);
         } else {
-            user = this.userMapper.toEntity(command);
+            user = createUser(command);
         }
 
-        return this.userRepository.save(user);
+        user = this.userRepository.save(user);
+        return this.userMapper.toDto(user);
     }
 
     private void mergeUser(User user, UserOidcUpsertCommand command) {
         user.setPictureUrl(command.pictureUrl());
         user.setEmail(command.email());
+    }
+
+    private User createUser(UserOidcUpsertCommand command) {
+        var user = this.userMapper.toEntity(command);
+        user.setRole(Role.USER);
+        return user;
     }
 
 }
