@@ -45,7 +45,7 @@ public class AccessLogFilter extends OncePerRequestFilter {
                 .addKeyValue("responseContentLength", responseContentLength)
                 .addKeyValue("status", response.getStatus())
                 .addKeyValue("elapsedMillis", elapsedMillis)
-                .log("Handled http request");
+                .log("Handle http request");
         }
     }
 

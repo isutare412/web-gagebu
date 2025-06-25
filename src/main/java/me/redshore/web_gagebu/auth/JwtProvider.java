@@ -54,7 +54,7 @@ public class JwtProvider implements JwtDecoder {
             new Date(now.getTime() + this.authProperties.getJwt().getExpiration().toMillis());
 
         Claims claims = Jwts.claims()
-            .subject(user.id().toString())
+            .subject(user.getId().toString())
             .issuer(this.authProperties.getJwt().getIssuer())
             .issuedAt(now)
             .notBefore(now)

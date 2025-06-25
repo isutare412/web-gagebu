@@ -66,6 +66,7 @@ public class SecurityConfig {
                 .jwt(jwt -> jwt
                     .decoder(this.jwtProvider)
                     .jwtAuthenticationConverter(this.jwtConverter))
+                .authenticationEntryPoint(this.authenticationEntryPoint)
                 .bearerTokenResolver(this.bearerTokenResolver))
             .logout(logout -> logout
                 .logoutUrl(LOGOUT_URI)
