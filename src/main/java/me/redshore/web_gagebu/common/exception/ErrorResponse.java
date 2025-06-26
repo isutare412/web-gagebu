@@ -13,7 +13,7 @@ public class ErrorResponse {
     @Schema(example = "Not Found")
     private final String statusText;
 
-    @Schema(example = "RESOURCE_NOT_FOUND")
+    @Schema(example = "DETAILED_ERROR_CODE")
     private final ErrorCode errorCode;
 
     @Schema(example = "Something went wrong")

@@ -6,7 +6,8 @@ import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.stereotype.Service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import me.redshore.web_gagebu.common.exception.auth.UnexpectedIdpException;
+import me.redshore.web_gagebu.common.exception.AppException;
+import me.redshore.web_gagebu.common.exception.ErrorCode;
 import me.redshore.web_gagebu.user.IdpType;
 import me.redshore.web_gagebu.user.UserService;
 import me.redshore.web_gagebu.user.dto.UserDto;
@@ -32,8 +33,8 @@ public class CustomOidcUserService extends OidcUserService {
                 yield this.userService.upsertUser(upsertCommand);
             }
             default -> {
-                throw new UnexpectedIdpException(
-                    String.format("Unsupported OIDC provider: %s",
+                throw new AppException(ErrorCode.BAD_REQUEST,
+                    String.format("Unsupported OIDC provider: '%s'",
                                   userRequest.getClientRegistration().getRegistrationId()));
             }
         };

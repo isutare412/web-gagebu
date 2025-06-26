@@ -28,7 +28,6 @@ public enum ErrorCode {
      * 404 Not Found
      */
     NOT_FOUND(HttpStatus.NOT_FOUND),
-    RESOURCE_NOT_FOUND(HttpStatus.NOT_FOUND),
 
     /**
      * 405 Method Not Allowed

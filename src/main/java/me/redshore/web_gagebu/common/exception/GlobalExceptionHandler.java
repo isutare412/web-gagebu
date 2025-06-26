@@ -7,6 +7,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.client.HttpStatusCodeException;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 import lombok.extern.slf4j.Slf4j;
 
@@ -14,8 +15,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(AppBaseException.class)
-    public ResponseEntity<ErrorResponse> handleAppBaseException(AppBaseException ex) {
+    @ExceptionHandler(AppException.class)
+    public ResponseEntity<ErrorResponse> handleAppException(AppException ex) {
         var errorCode = ex.getErrorCode();
         var errorResponse = new ErrorResponse(errorCode, ex.getMessage());
         var httpStatus = errorCode.toHttpStatus();
@@ -57,6 +58,16 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<ErrorResponse> handleAccessDeniedException(AccessDeniedException ex) {
         var httpStatus = HttpStatus.FORBIDDEN;
+        var errorCode = ErrorCode.ofHttpStatus(httpStatus);
+        var errorResponse = new ErrorResponse(errorCode, ex.getMessage());
+
+        logErrorResponse(httpStatus, ex);
+        return new ResponseEntity<>(errorResponse, httpStatus);
+    }
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<ErrorResponse> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException ex) {
+        var httpStatus = HttpStatus.UNPROCESSABLE_ENTITY;
         var errorCode = ErrorCode.ofHttpStatus(httpStatus);
         var errorResponse = new ErrorResponse(errorCode, ex.getMessage());
 

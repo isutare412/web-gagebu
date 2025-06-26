@@ -2,7 +2,7 @@ package me.redshore.web_gagebu.accountbook.invitation;
 
 import java.time.ZonedDateTime;
 import org.springframework.stereotype.Service;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 

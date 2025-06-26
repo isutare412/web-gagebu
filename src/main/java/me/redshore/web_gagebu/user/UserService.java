@@ -1,7 +1,7 @@
 package me.redshore.web_gagebu.user;
 
 import org.springframework.stereotype.Service;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import me.redshore.web_gagebu.user.dto.UserDto;
 import me.redshore.web_gagebu.user.dto.UserOidcUpsertCommand;
