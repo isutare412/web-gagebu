@@ -18,7 +18,7 @@ import jakarta.servlet.http.HttpServletResponse;
 public class RequestIdFilter extends OncePerRequestFilter {
 
     private static final String REQUEST_ID_HEADER = "X-Request-Id";
-    private static final String MDC_REQUEST_ID_KEY = "requestId";
+    public static final String MDC_REQUEST_ID_KEY = "requestId";
 
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request,

@@ -1,7 +1,9 @@
 package me.redshore.web_gagebu.common.exception;
 
+import org.slf4j.MDC;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
+import me.redshore.web_gagebu.common.filter.RequestIdFilter;
 
 @Schema(description = "Common error response structure")
 @Getter
@@ -19,6 +21,9 @@ public class ErrorResponse {
     @Schema(example = "Something went wrong")
     private final String message;
 
+    @Schema(example = "123e4567-e89b-12d3-a456-426614174000")
+    private final String requestId;
+
     public ErrorResponse(ErrorCode errorCode, String message) {
         var httpStatus = errorCode.toHttpStatus();
 
@@ -26,6 +31,7 @@ public class ErrorResponse {
         this.statusText = httpStatus.getReasonPhrase();
         this.errorCode = errorCode;
         this.message = message;
+        this.requestId = MDC.get(RequestIdFilter.MDC_REQUEST_ID_KEY);
     }
 
 }
