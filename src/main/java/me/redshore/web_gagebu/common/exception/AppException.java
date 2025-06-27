@@ -14,7 +14,6 @@ public class AppException extends RuntimeException {
         this.errorCode = errorCode;
     }
 
-    // TODO: define more detailed exceptions
     public AppException(ErrorCode errorCode, String message) {
         this(errorCode, message, null);
     }

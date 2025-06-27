@@ -106,12 +106,14 @@ public class GlobalExceptionHandler {
                 .addKeyValue("exception", ex.getClass().getSimpleName())
                 .addKeyValue("status", httpStatus.value())
                 .addKeyValue("statusText", httpStatus.getReasonPhrase())
+                .addKeyValue("message", ex.getMessage())
                 .log("4xx error occurred");
         } else if (httpStatus.is5xxServerError()) {
             log.atError()
                 .addKeyValue("exception", ex.getClass().getSimpleName())
                 .addKeyValue("status", httpStatus.value())
                 .addKeyValue("statusText", httpStatus.getReasonPhrase())
+                .addKeyValue("message", ex.getMessage())
                 .setCause(ex)
                 .log("5xx error occurred");
         }

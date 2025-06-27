@@ -28,7 +28,7 @@ public class JwtAuthenticationToken extends AbstractAuthenticationToken {
 
     @Override
     public String getName() {
-        return this.payload.getNickname();
+        return this.payload.getId().toString();
     }
 
     @Override
