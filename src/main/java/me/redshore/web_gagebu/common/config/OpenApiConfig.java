@@ -13,8 +13,8 @@ import io.swagger.v3.oas.models.media.MediaType;
 import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.responses.ApiResponse;
 import io.swagger.v3.oas.models.security.SecurityScheme;
-import me.redshore.web_gagebu.auth.OidcSuccessHandler;
-import me.redshore.web_gagebu.common.exception.ErrorResponse;
+import me.redshore.web_gagebu.common.error.ErrorResponse;
+import me.redshore.web_gagebu.feature.auth.oidc.OidcSuccessHandler;
 
 @Configuration
 public class OpenApiConfig {

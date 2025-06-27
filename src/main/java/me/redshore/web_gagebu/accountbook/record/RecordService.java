@@ -1,9 +1,0 @@
-package me.redshore.web_gagebu.accountbook.record;
-
-import org.springframework.stereotype.Service;
-import lombok.RequiredArgsConstructor;
-
-@Service
-@RequiredArgsConstructor
-public class RecordService {
-}

@@ -1,0 +1,17 @@
+package me.redshore.web_gagebu.feature.auth.jwt;
+
+import org.springframework.core.convert.converter.Converter;
+import org.springframework.lang.NonNull;
+import org.springframework.security.authentication.AbstractAuthenticationToken;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.stereotype.Component;
+
+@Component
+public class JwtConverter implements Converter<Jwt, AbstractAuthenticationToken> {
+
+    @Override
+    public AbstractAuthenticationToken convert(@NonNull Jwt jwt) {
+        return new JwtAuthenticationToken(jwt);
+    }
+
+}
