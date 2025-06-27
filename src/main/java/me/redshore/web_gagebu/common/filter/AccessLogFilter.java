@@ -1,16 +1,16 @@
 package me.redshore.web_gagebu.common.filter;
 
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import lombok.extern.slf4j.Slf4j;
 
 @Component
 @Order(Ordered.HIGHEST_PRECEDENCE + 200)
@@ -22,7 +22,6 @@ public class AccessLogFilter extends OncePerRequestFilter {
                                     @NonNull HttpServletResponse response,
                                     @NonNull FilterChain filterChain)
         throws ServletException, IOException {
-
         var startTime = System.currentTimeMillis();
 
         try {
@@ -33,19 +32,19 @@ public class AccessLogFilter extends OncePerRequestFilter {
 
             int responseContentLength =
                 Integer.parseInt(response.getHeader("Content-Length") != null
-                    ? response.getHeader("Content-Length")
-                    : "-1");
+                                 ? response.getHeader("Content-Length")
+                                 : "-1");
 
             log.atInfo()
-                .addKeyValue("method", request.getMethod())
-                .addKeyValue("uri", getFullRequestUri(request))
-                .addKeyValue("remoteAddr", request.getRemoteAddr())
-                .addKeyValue("protocol", request.getProtocol())
-                .addKeyValue("requestContentLength", request.getContentLength())
-                .addKeyValue("responseContentLength", responseContentLength)
-                .addKeyValue("status", response.getStatus())
-                .addKeyValue("elapsedMillis", elapsedMillis)
-                .log("Handle http request");
+               .addKeyValue("method", request.getMethod())
+               .addKeyValue("uri", getFullRequestUri(request))
+               .addKeyValue("remoteAddr", request.getRemoteAddr())
+               .addKeyValue("protocol", request.getProtocol())
+               .addKeyValue("requestContentLength", request.getContentLength())
+               .addKeyValue("responseContentLength", responseContentLength)
+               .addKeyValue("status", response.getStatus())
+               .addKeyValue("elapsedMillis", elapsedMillis)
+               .log("Handle http request");
         }
     }
 

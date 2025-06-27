@@ -1,18 +1,18 @@
 package me.redshore.web_gagebu.feature.auth.jwt;
 
+import io.jsonwebtoken.Claims;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import org.springframework.lang.Nullable;
-import org.springframework.security.oauth2.jwt.Jwt;
-import io.jsonwebtoken.Claims;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import me.redshore.web_gagebu.feature.user.domain.IdpType;
 import me.redshore.web_gagebu.feature.user.domain.UserRole;
+import org.springframework.lang.Nullable;
+import org.springframework.security.oauth2.jwt.Jwt;
 
 @EqualsAndHashCode
 @AllArgsConstructor
@@ -73,8 +73,8 @@ public class JwtUserPayload {
 
     private static List<UserRole> parseRoles(List<?> roles) {
         return roles.stream()
-            .map(role -> UserRole.valueOf(role.toString()))
-            .toList();
+                    .map(role -> UserRole.valueOf(role.toString()))
+                    .toList();
     }
 
 }

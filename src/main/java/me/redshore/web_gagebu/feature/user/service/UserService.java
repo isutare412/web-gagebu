@@ -1,14 +1,14 @@
 package me.redshore.web_gagebu.feature.user.service;
 
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
-import me.redshore.web_gagebu.feature.user.domain.UserRole;
 import me.redshore.web_gagebu.feature.user.domain.User;
+import me.redshore.web_gagebu.feature.user.domain.UserRole;
 import me.redshore.web_gagebu.feature.user.dto.UserDto;
 import me.redshore.web_gagebu.feature.user.dto.UserOidcUpsertCommand;
 import me.redshore.web_gagebu.feature.user.mapping.UserMapper;
 import me.redshore.web_gagebu.feature.user.repository.UserRepository;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -20,25 +20,19 @@ public class UserService {
 
     @Transactional
     public UserDto upsertUser(UserOidcUpsertCommand command) {
-        var optionalUser =
-            this.userRepository.findByIdpTypeAndIdpIdentifier(command.idpType(),
-                                                              command.idpIdentifier());
-
-        User user;
-        if (optionalUser.isPresent()) {
-            user = optionalUser.get();
-            mergeUser(user, command);
-        } else {
-            user = createUser(command);
-        }
+        User user = this.userRepository.findByIdpTypeAndIdpIdentifier(command.idpType(),
+                                                                      command.idpIdentifier())
+                                       .map(found -> mergeUser(found, command))
+                                       .orElseGet(() -> createUser(command));
 
         user = this.userRepository.save(user);
         return this.userMapper.toDto(user);
     }
 
-    private void mergeUser(User user, UserOidcUpsertCommand command) {
+    private User mergeUser(User user, UserOidcUpsertCommand command) {
         user.setPictureUrl(command.pictureUrl());
         user.setEmail(command.email());
+        return user;
     }
 
     private User createUser(UserOidcUpsertCommand command) {
@@ -46,5 +40,4 @@ public class UserService {
         user.addRole(UserRole.USER);
         return user;
     }
-
 }

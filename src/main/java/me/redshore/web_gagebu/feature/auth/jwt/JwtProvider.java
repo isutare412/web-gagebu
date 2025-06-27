@@ -1,5 +1,14 @@
 package me.redshore.web_gagebu.feature.auth.jwt;
 
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.Jws;
+import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.JwtParser;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.UnsupportedJwtException;
+import io.jsonwebtoken.security.SignatureException;
 import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
@@ -12,20 +21,11 @@ import java.time.Instant;
 import java.util.Base64;
 import java.util.Collections;
 import java.util.Date;
+import lombok.extern.slf4j.Slf4j;
+import me.redshore.web_gagebu.common.config.properties.AuthProperties;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.stereotype.Component;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.Jws;
-import io.jsonwebtoken.JwtException;
-import io.jsonwebtoken.JwtParser;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.MalformedJwtException;
-import io.jsonwebtoken.UnsupportedJwtException;
-import io.jsonwebtoken.security.SignatureException;
-import lombok.extern.slf4j.Slf4j;
-import me.redshore.web_gagebu.common.config.properties.AuthProperties;
 
 @Component
 @Slf4j
@@ -53,21 +53,21 @@ public class JwtProvider implements JwtDecoder {
             new Date(now.getTime() + this.authProperties.getJwt().getExpiration().toMillis());
 
         Claims claims = Jwts.claims()
-            .subject(user.getId().toString())
-            .issuer(this.authProperties.getJwt().getIssuer())
-            .issuedAt(now)
-            .notBefore(now)
-            .expiration(expiration)
-            .add(user.toMap())
-            .build();
+                            .subject(user.getId().toString())
+                            .issuer(this.authProperties.getJwt().getIssuer())
+                            .issuedAt(now)
+                            .notBefore(now)
+                            .expiration(expiration)
+                            .add(user.toMap())
+                            .build();
 
         return Jwts.builder()
-            .header()
-            .type("JWT")
-            .and()
-            .claims(claims)
-            .signWith(this.privateKey)
-            .compact();
+                   .header()
+                   .type("JWT")
+                   .and()
+                   .claims(claims)
+                   .signWith(this.privateKey)
+                   .compact();
     }
 
     public JwtUserPayload parseToken(String token)
@@ -154,4 +154,3 @@ public class JwtProvider implements JwtDecoder {
     }
 
 }
-

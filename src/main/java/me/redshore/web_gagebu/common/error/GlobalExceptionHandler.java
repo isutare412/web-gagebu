@@ -1,5 +1,6 @@
 package me.redshore.web_gagebu.common.error;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -9,7 +10,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
-import lombok.extern.slf4j.Slf4j;
 
 @RestControllerAdvice
 @Slf4j
@@ -26,7 +26,8 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(NoResourceFoundException.class)
-    public ResponseEntity<ErrorResponse> handlNoResourceFoundException(NoResourceFoundException ex) {
+    public ResponseEntity<ErrorResponse> handlNoResourceFoundException(
+        NoResourceFoundException ex) {
         var httpStatus = HttpStatus.NOT_FOUND;
         var errorCode = ErrorCode.ofHttpStatus(httpStatus);
         var errorResponse = new ErrorResponse(errorCode, ex.getMessage());
@@ -66,7 +67,8 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
-    public ResponseEntity<ErrorResponse> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException ex) {
+    public ResponseEntity<ErrorResponse> handleMethodArgumentTypeMismatchException(
+        MethodArgumentTypeMismatchException ex) {
         var httpStatus = HttpStatus.UNPROCESSABLE_ENTITY;
         var errorCode = ErrorCode.ofHttpStatus(httpStatus);
         var errorResponse = new ErrorResponse(errorCode, ex.getMessage());
@@ -84,7 +86,7 @@ public class GlobalExceptionHandler {
 
         var httpStatus = HttpStatus.NOT_IMPLEMENTED;
         var errorCode = ErrorCode.ofHttpStatus(httpStatus);
-        var errorResponse = new ErrorResponse(errorCode, ex.getMessage());
+        var errorResponse = new ErrorResponse(errorCode, message);
 
         logErrorResponse(httpStatus, ex);
         return new ResponseEntity<>(errorResponse, httpStatus);
@@ -103,19 +105,19 @@ public class GlobalExceptionHandler {
     private static void logErrorResponse(HttpStatus httpStatus, Exception ex) {
         if (httpStatus.is4xxClientError()) {
             log.atWarn()
-                .addKeyValue("exception", ex.getClass().getSimpleName())
-                .addKeyValue("status", httpStatus.value())
-                .addKeyValue("statusText", httpStatus.getReasonPhrase())
-                .addKeyValue("message", ex.getMessage())
-                .log("4xx error occurred");
+               .addKeyValue("exception", ex.getClass().getSimpleName())
+               .addKeyValue("status", httpStatus.value())
+               .addKeyValue("statusText", httpStatus.getReasonPhrase())
+               .addKeyValue("message", ex.getMessage())
+               .log("4xx error occurred");
         } else if (httpStatus.is5xxServerError()) {
             log.atError()
-                .addKeyValue("exception", ex.getClass().getSimpleName())
-                .addKeyValue("status", httpStatus.value())
-                .addKeyValue("statusText", httpStatus.getReasonPhrase())
-                .addKeyValue("message", ex.getMessage())
-                .setCause(ex)
-                .log("5xx error occurred");
+               .addKeyValue("exception", ex.getClass().getSimpleName())
+               .addKeyValue("status", httpStatus.value())
+               .addKeyValue("statusText", httpStatus.getReasonPhrase())
+               .addKeyValue("message", ex.getMessage())
+               .setCause(ex)
+               .log("5xx error occurred");
         }
     }
 

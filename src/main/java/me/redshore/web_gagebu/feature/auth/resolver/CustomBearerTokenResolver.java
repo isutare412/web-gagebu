@@ -1,12 +1,12 @@
 package me.redshore.web_gagebu.feature.auth.resolver;
 
+import jakarta.servlet.http.HttpServletRequest;
+import lombok.extern.slf4j.Slf4j;
+import me.redshore.web_gagebu.feature.auth.oidc.OidcSuccessHandler;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.server.resource.BearerTokenErrors;
 import org.springframework.security.oauth2.server.resource.web.BearerTokenResolver;
 import org.springframework.stereotype.Component;
-import jakarta.servlet.http.HttpServletRequest;
-import lombok.extern.slf4j.Slf4j;
-import me.redshore.web_gagebu.feature.auth.oidc.OidcSuccessHandler;
 
 @Component
 @Slf4j

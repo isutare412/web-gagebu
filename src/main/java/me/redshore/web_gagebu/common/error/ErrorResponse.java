@@ -1,9 +1,9 @@
 package me.redshore.web_gagebu.common.error;
 
-import org.slf4j.MDC;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import me.redshore.web_gagebu.common.filter.RequestIdFilter;
+import org.slf4j.MDC;
 
 @Schema(description = "Common error response structure")
 @Getter

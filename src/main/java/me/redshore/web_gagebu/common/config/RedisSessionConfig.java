@@ -8,4 +8,5 @@ import org.springframework.session.data.redis.config.annotation.web.http.EnableR
 @EnableRedisHttpSession
 @Profile({"!local & !test & !dev & !default"})
 public class RedisSessionConfig {
+
 }

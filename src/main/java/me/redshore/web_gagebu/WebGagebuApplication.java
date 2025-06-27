@@ -10,8 +10,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableAspectJAutoProxy
 public class WebGagebuApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(WebGagebuApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(WebGagebuApplication.class, args);
+    }
 
 }

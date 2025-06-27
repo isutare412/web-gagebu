@@ -1,9 +1,5 @@
 package me.redshore.web_gagebu.feature.auth.oidc;
 
-import org.springframework.security.core.Authentication;
-import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
-import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -11,6 +7,10 @@ import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.redshore.web_gagebu.feature.auth.jwt.JwtProvider;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
+import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 @Component
 @RequiredArgsConstructor
@@ -41,11 +41,10 @@ public class OidcSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
     }
 
     private void setTokenCookie(HttpServletResponse response, Authentication authentication) {
-        if (!(authentication.getPrincipal() instanceof CustomOidcUser)) {
+        if (!(authentication.getPrincipal() instanceof CustomOidcUser oidcUser)) {
             return;
         }
 
-        var oidcUser = (CustomOidcUser) authentication.getPrincipal();
         var payload = oidcUser.getUserJwtPayload();
         var token = jwtProvider.createToken(payload);
 

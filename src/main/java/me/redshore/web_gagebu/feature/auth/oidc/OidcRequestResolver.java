@@ -1,15 +1,15 @@
 package me.redshore.web_gagebu.feature.auth.oidc;
 
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.Map;
+import lombok.extern.slf4j.Slf4j;
+import me.redshore.web_gagebu.feature.auth.SecurityConfig;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.oauth2.client.web.DefaultOAuth2AuthorizationRequestResolver;
 import org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequestResolver;
 import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
-import jakarta.servlet.http.HttpServletRequest;
-import lombok.extern.slf4j.Slf4j;
-import me.redshore.web_gagebu.feature.auth.SecurityConfig;
 
 @Component
 @Slf4j
@@ -22,7 +22,7 @@ public class OidcRequestResolver implements OAuth2AuthorizationRequestResolver {
     public OidcRequestResolver(ClientRegistrationRepository registrationRepository) {
         this.defaultResolver =
             new DefaultOAuth2AuthorizationRequestResolver(registrationRepository,
-                SecurityConfig.AUTHZ_BASE_URI);
+                                                          SecurityConfig.AUTHZ_BASE_URI);
 
         this.defaultResolver.setAuthorizationRequestCustomizer(builder -> builder
             .additionalParameters(Map.of("prompt", "consent")));

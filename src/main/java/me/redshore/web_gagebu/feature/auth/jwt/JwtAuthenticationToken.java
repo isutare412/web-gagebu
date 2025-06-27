@@ -47,9 +47,9 @@ public class JwtAuthenticationToken extends AbstractAuthenticationToken {
         }
 
         return roles.stream()
-            .filter(role -> role != null)
-            .map(role -> new SimpleGrantedAuthority("ROLE_" + role.toUpperCase()))
-            .collect(Collectors.toList());
+                    .filter(role -> role != null)
+                    .map(role -> new SimpleGrantedAuthority("ROLE_" + role.toUpperCase()))
+                    .collect(Collectors.toList());
     }
 
 }

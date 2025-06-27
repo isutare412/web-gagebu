@@ -1,10 +1,12 @@
 package me.redshore.web_gagebu.common.error;
 
+import java.io.Serial;
 import lombok.Getter;
 
 @Getter
 public class AppException extends RuntimeException {
 
+    @Serial
     private static final long serialVersionUID = 129872L;
 
     private final ErrorCode errorCode;

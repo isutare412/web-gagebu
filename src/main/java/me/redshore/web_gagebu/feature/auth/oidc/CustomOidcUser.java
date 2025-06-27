@@ -1,11 +1,13 @@
 package me.redshore.web_gagebu.feature.auth.oidc;
 
+import java.io.Serial;
+import me.redshore.web_gagebu.feature.auth.jwt.JwtUserPayload;
 import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
-import me.redshore.web_gagebu.feature.auth.jwt.JwtUserPayload;
 
 public class CustomOidcUser extends DefaultOidcUser {
 
+    @Serial
     private static final long serialVersionUID = 928357192389L;
 
     private JwtUserPayload userPayload;

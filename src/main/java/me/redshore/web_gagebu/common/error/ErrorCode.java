@@ -1,9 +1,9 @@
 package me.redshore.web_gagebu.common.error;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.HashMap;
 import java.util.Map;
 import org.springframework.http.HttpStatus;
-import io.swagger.v3.oas.annotations.media.Schema;
 
 @Schema(description = "Detailed error codes for the application")
 public enum ErrorCode {

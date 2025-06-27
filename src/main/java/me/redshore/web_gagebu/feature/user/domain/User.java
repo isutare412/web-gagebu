@@ -1,12 +1,5 @@
 package me.redshore.web_gagebu.feature.user.domain;
 
-import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.type.SqlTypes;
-import io.micrometer.common.lang.Nullable;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -16,10 +9,17 @@ import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
+import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
+import org.springframework.lang.Nullable;
 
 @Entity
 @Table(
@@ -47,14 +47,14 @@ public class User {
     @Column(length = 16, nullable = false)
     private IdpType idpType;
 
-    @Column(length = 255, nullable = false)
+    @Column(nullable = false)
     private String idpIdentifier;
 
-    @Column(length = 1024, nullable = true)
+    @Column(length = 1024)
     @Nullable
     private String pictureUrl;
 
-    @Column(length = 256, nullable = true)
+    @Column(length = 256)
     @Nullable
     private String email;
 

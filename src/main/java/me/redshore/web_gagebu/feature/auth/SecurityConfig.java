@@ -1,13 +1,5 @@
 package me.redshore.web_gagebu.feature.auth;
 
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.logout.CookieClearingLogoutHandler;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import me.redshore.web_gagebu.feature.auth.handler.CustomAccessDeniedHandler;
@@ -18,6 +10,14 @@ import me.redshore.web_gagebu.feature.auth.oidc.CustomOidcUserService;
 import me.redshore.web_gagebu.feature.auth.oidc.OidcRequestResolver;
 import me.redshore.web_gagebu.feature.auth.oidc.OidcSuccessHandler;
 import me.redshore.web_gagebu.feature.auth.resolver.CustomBearerTokenResolver;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.logout.CookieClearingLogoutHandler;
 
 @Configuration
 @EnableWebSecurity
@@ -74,7 +74,7 @@ public class SecurityConfig {
                 .logoutUrl(LOGOUT_URI)
                 .addLogoutHandler(new CookieClearingLogoutHandler(
                     OidcSuccessHandler.TOKEN_COOKIE_NAME))
-                .logoutSuccessHandler((requrest, response, authentication) -> response
+                .logoutSuccessHandler((request, response, authentication) -> response
                     .setStatus(HttpServletResponse.SC_OK)))
             .exceptionHandling(exception -> exception
                 .authenticationEntryPoint(this.authenticationEntryPoint)
