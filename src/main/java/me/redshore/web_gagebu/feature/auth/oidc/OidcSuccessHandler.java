@@ -1,12 +1,11 @@
 package me.redshore.web_gagebu.feature.auth.oidc;
 
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import me.redshore.web_gagebu.feature.auth.jwt.JwtProvider;
+import me.redshore.web_gagebu.feature.auth.jwt.JwtCookieSetter;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
@@ -17,9 +16,7 @@ import org.springframework.util.StringUtils;
 @Slf4j
 public class OidcSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
-    public static final String TOKEN_COOKIE_NAME = "TOKEN";
-
-    private final JwtProvider jwtProvider;
+    private final JwtCookieSetter jwtCookieSetter;
 
     @Override
     protected String determineTargetUrl(HttpServletRequest request, HttpServletResponse response,
@@ -46,15 +43,7 @@ public class OidcSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
         }
 
         var payload = oidcUser.getUserJwtPayload();
-        var token = jwtProvider.createToken(payload);
-
-        var cookie = new Cookie(TOKEN_COOKIE_NAME, token);
-        cookie.setHttpOnly(true);
-        cookie.setSecure(false);
-        cookie.setPath("/");
-        cookie.setMaxAge((int) (this.jwtProvider.getExpiration().toSeconds() - 60));
-        cookie.setAttribute("SameSite", "Lax");
-        response.addCookie(cookie);
+        this.jwtCookieSetter.setCookie(response, payload);
     }
 
 }

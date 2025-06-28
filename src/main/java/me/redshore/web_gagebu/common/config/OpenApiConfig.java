@@ -11,7 +11,7 @@ import io.swagger.v3.oas.models.media.Schema;
 import io.swagger.v3.oas.models.responses.ApiResponse;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import me.redshore.web_gagebu.common.error.ErrorResponse;
-import me.redshore.web_gagebu.feature.auth.oidc.OidcSuccessHandler;
+import me.redshore.web_gagebu.feature.auth.jwt.JwtCookieSetter;
 import org.springdoc.core.customizers.OpenApiCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -34,7 +34,7 @@ public class OpenApiConfig {
                             .addSecuritySchemes(COOKIE_TOKEN_AUTH, new SecurityScheme()
                                 .type(SecurityScheme.Type.APIKEY)
                                 .in(SecurityScheme.In.COOKIE)
-                                .name(OidcSuccessHandler.TOKEN_COOKIE_NAME)))
+                                .name(JwtCookieSetter.TOKEN_COOKIE_NAME)))
             .info(new Info()
                       .title("Web Gagebu API")
                       .version("0.1.0"));
@@ -42,9 +42,7 @@ public class OpenApiConfig {
 
     @Bean
     OpenApiCustomizer openApiCustomizer() {
-        return openApi -> {
-            addDefaultErrorResponse(openApi);
-        };
+        return this::addDefaultErrorResponse;
     }
 
     private void addDefaultErrorResponse(OpenAPI openApi) {
@@ -64,11 +62,11 @@ public class OpenApiConfig {
                                                                       "#/components/schemas/ErrorResponse"))));
 
         // Add default error response to all operations
-        openApi.getPaths().values().forEach(pathItem -> {
-            pathItem.readOperations().forEach(operation -> {
-                operation.getResponses().addApiResponse("default", errorApiResponse);
-            });
-        });
+        openApi.getPaths().values()
+               .forEach(pathItem -> pathItem.readOperations()
+                                            .forEach(operation -> operation
+                                                .getResponses()
+                                                .addApiResponse("default", errorApiResponse)));
     }
 
 }

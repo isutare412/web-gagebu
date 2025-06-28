@@ -57,7 +57,8 @@ app:
         <PKCS8_PRIVATE_KEY>
       public-key: |
         <PUBLIC_KEY>
-      expiration: 1d
+      expiration: 7d
+      renewal: 1d
 
   invitation:
     cleanup:

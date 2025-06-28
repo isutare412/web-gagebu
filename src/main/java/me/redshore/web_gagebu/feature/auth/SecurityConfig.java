@@ -4,18 +4,23 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import me.redshore.web_gagebu.feature.auth.handler.CustomAccessDeniedHandler;
 import me.redshore.web_gagebu.feature.auth.handler.CustomAuthenticationEntryPoint;
+import me.redshore.web_gagebu.feature.auth.jwt.JwtAutoRenewalFilter;
 import me.redshore.web_gagebu.feature.auth.jwt.JwtConverter;
+import me.redshore.web_gagebu.feature.auth.jwt.JwtCookieSetter;
 import me.redshore.web_gagebu.feature.auth.jwt.JwtProvider;
 import me.redshore.web_gagebu.feature.auth.oidc.CustomOidcUserService;
 import me.redshore.web_gagebu.feature.auth.oidc.OidcRequestResolver;
 import me.redshore.web_gagebu.feature.auth.oidc.OidcSuccessHandler;
 import me.redshore.web_gagebu.feature.auth.resolver.CustomBearerTokenResolver;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.oauth2.server.resource.web.authentication.BearerTokenAuthenticationFilter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.logout.CookieClearingLogoutHandler;
 
@@ -45,12 +50,14 @@ public class SecurityConfig {
 
     private final JwtConverter jwtConverter;
 
+    private final JwtAutoRenewalFilter jwtAutoRenewalFilter;
+
     @Bean
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-            .csrf(csrf -> csrf.disable())
-            .formLogin(form -> form.disable())
-            .httpBasic(basic -> basic.disable())
+            .csrf(AbstractHttpConfigurer::disable)
+            .formLogin(AbstractHttpConfigurer::disable)
+            .httpBasic(AbstractHttpConfigurer::disable)
             .sessionManagement(session -> session
                 .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED));
 
@@ -72,8 +79,8 @@ public class SecurityConfig {
                 .bearerTokenResolver(this.bearerTokenResolver))
             .logout(logout -> logout
                 .logoutUrl(LOGOUT_URI)
-                .addLogoutHandler(new CookieClearingLogoutHandler(
-                    OidcSuccessHandler.TOKEN_COOKIE_NAME))
+                .addLogoutHandler(
+                    new CookieClearingLogoutHandler(JwtCookieSetter.TOKEN_COOKIE_NAME))
                 .logoutSuccessHandler((request, response, authentication) -> response
                     .setStatus(HttpServletResponse.SC_OK)))
             .exceptionHandling(exception -> exception
@@ -85,10 +92,20 @@ public class SecurityConfig {
                 .requestMatchers("/api/*/oauth2/**").permitAll()
                 .requestMatchers("/api/*/logout").permitAll()
                 .requestMatchers("/api/*/admin/**").hasRole("ADMIN")
+                .requestMatchers("/api/*/users/me").permitAll()
                 .requestMatchers("/api/**").authenticated()
                 .anyRequest().permitAll());
+
+        http.addFilterAfter(jwtAutoRenewalFilter, BearerTokenAuthenticationFilter.class);
 
         return http.build();
     }
 
+    @Bean
+    public FilterRegistrationBean<JwtAutoRenewalFilter> disableJwtAutoRenewalFilterRegistration(
+        JwtAutoRenewalFilter filter) {
+        var regitrationBean = new FilterRegistrationBean<>(filter);
+        regitrationBean.setEnabled(false);
+        return regitrationBean;
+    }
 }

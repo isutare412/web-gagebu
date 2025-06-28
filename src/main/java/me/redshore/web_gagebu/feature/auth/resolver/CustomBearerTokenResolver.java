@@ -2,7 +2,7 @@ package me.redshore.web_gagebu.feature.auth.resolver;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
-import me.redshore.web_gagebu.feature.auth.oidc.OidcSuccessHandler;
+import me.redshore.web_gagebu.feature.auth.jwt.JwtCookieSetter;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.server.resource.BearerTokenErrors;
 import org.springframework.security.oauth2.server.resource.web.BearerTokenResolver;
@@ -14,9 +14,8 @@ public class CustomBearerTokenResolver implements BearerTokenResolver {
 
     @Override
     public String resolve(HttpServletRequest request) {
-        var token = resolveTokens(resolveFromHeader(request),
-                                  resolveFromCookie(request));
-        return token;
+        return resolveTokens(resolveFromHeader(request),
+                             resolveFromCookie(request));
     }
 
     private static String resolveTokens(String... tokens) {
@@ -55,7 +54,7 @@ public class CustomBearerTokenResolver implements BearerTokenResolver {
         }
 
         for (var cookie : cookies) {
-            if (OidcSuccessHandler.TOKEN_COOKIE_NAME.equals(cookie.getName())) {
+            if (JwtCookieSetter.TOKEN_COOKIE_NAME.equals(cookie.getName())) {
                 return cookie.getValue();
             }
         }
