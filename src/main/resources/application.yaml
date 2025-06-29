@@ -18,12 +18,6 @@ spring:
     password: admin123123
     driver-class-name: org.postgresql.Driver
 
-  data:
-    redis:
-      host: localhost
-      password: r3d1s
-      port: 42400
-
   jpa:
     hibernate:
       ddl-auto: update
