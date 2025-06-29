@@ -51,6 +51,9 @@ logging:
   config: classpath:log4j2-spring.xml
 
 app:
+  encryption:
+    key: <ENCRYPTION_KEY>
+
   auth:
     jwt:
       private-key: |

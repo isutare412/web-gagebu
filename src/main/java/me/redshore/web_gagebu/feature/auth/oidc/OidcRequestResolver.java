@@ -9,13 +9,10 @@ import org.springframework.security.oauth2.client.web.DefaultOAuth2Authorization
 import org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequestResolver;
 import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 
 @Component
 @Slf4j
 public class OidcRequestResolver implements OAuth2AuthorizationRequestResolver {
-
-    public static final String REDIRECT_URI_KEY = "REDIRECT_URI";
 
     private final DefaultOAuth2AuthorizationRequestResolver defaultResolver;
 
@@ -23,7 +20,6 @@ public class OidcRequestResolver implements OAuth2AuthorizationRequestResolver {
         this.defaultResolver =
             new DefaultOAuth2AuthorizationRequestResolver(registrationRepository,
                                                           SecurityConfig.AUTHZ_BASE_URI);
-
         this.defaultResolver.setAuthorizationRequestCustomizer(builder -> builder
             .additionalParameters(Map.of("prompt", "consent")));
     }
@@ -35,7 +31,7 @@ public class OidcRequestResolver implements OAuth2AuthorizationRequestResolver {
             return null;
         }
 
-        onOAuth2Request(oauthRequest, httpRequest);
+        onOAuth2Request(oauthRequest);
 
         return oauthRequest;
     }
@@ -49,19 +45,13 @@ public class OidcRequestResolver implements OAuth2AuthorizationRequestResolver {
             return null;
         }
 
-        onOAuth2Request(oauthRequest, httpRequest);
+        onOAuth2Request(oauthRequest);
 
         return oauthRequest;
     }
 
-    private void onOAuth2Request(OAuth2AuthorizationRequest request,
-                                 HttpServletRequest httpRequest) {
+    private void onOAuth2Request(OAuth2AuthorizationRequest request) {
         log.info("Start OIDC flow at {}", request.getAuthorizationUri());
-
-        var referer = httpRequest.getHeader("Referer");
-        if (StringUtils.hasText(referer)) {
-            httpRequest.getSession().setAttribute(REDIRECT_URI_KEY, referer);
-        }
     }
 
 }

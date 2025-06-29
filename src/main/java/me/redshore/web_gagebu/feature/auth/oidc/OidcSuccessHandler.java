@@ -2,7 +2,7 @@ package me.redshore.web_gagebu.feature.auth.oidc;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.redshore.web_gagebu.feature.auth.jwt.JwtCookieSetter;
@@ -18,32 +18,28 @@ public class OidcSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
     private final JwtCookieSetter jwtCookieSetter;
 
+    private final OidcCookieManager cookieManager;
+
     @Override
     protected String determineTargetUrl(HttpServletRequest request, HttpServletResponse response,
                                         Authentication authentication) {
         setTokenCookie(response, authentication);
 
-        HttpSession session = request.getSession();
-        var redirectUri = (String) session.getAttribute(OidcRequestResolver.REDIRECT_URI_KEY);
+        final var redirectUri =
+            this.cookieManager.getRedirectUri(request)
+                              .filter(StringUtils::hasText)
+                              .orElseGet(() -> super.determineTargetUrl(request, response));
 
-        if (!StringUtils.hasText(redirectUri)) {
-            String defaultUri = super.determineTargetUrl(request, response);
-            log.info("No referer found, redirecting to default URL: '{}'", defaultUri);
-            return defaultUri;
-        }
-        session.removeAttribute(OidcRequestResolver.REDIRECT_URI_KEY);
-
-        log.info("Referer found in session, redirecting to: '{}'", redirectUri);
+        log.info("Finish OIDC flow. Redirect to '{}'", redirectUri);
         return redirectUri;
     }
 
     private void setTokenCookie(HttpServletResponse response, Authentication authentication) {
-        if (!(authentication.getPrincipal() instanceof CustomOidcUser oidcUser)) {
-            return;
-        }
-
-        var payload = oidcUser.getUserJwtPayload();
-        this.jwtCookieSetter.setCookie(response, payload);
+        Optional.of(authentication.getPrincipal())
+                .filter(CustomOidcUser.class::isInstance)
+                .map(CustomOidcUser.class::cast)
+                .map(CustomOidcUser::getUserJwtPayload)
+                .ifPresent(payload -> this.jwtCookieSetter.setCookie(response, payload));
     }
 
 }

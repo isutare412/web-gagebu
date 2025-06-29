@@ -9,6 +9,7 @@ import me.redshore.web_gagebu.feature.auth.jwt.JwtConverter;
 import me.redshore.web_gagebu.feature.auth.jwt.JwtCookieSetter;
 import me.redshore.web_gagebu.feature.auth.jwt.JwtProvider;
 import me.redshore.web_gagebu.feature.auth.oidc.CustomOidcUserService;
+import me.redshore.web_gagebu.feature.auth.oidc.OidcRequestRepository;
 import me.redshore.web_gagebu.feature.auth.oidc.OidcRequestResolver;
 import me.redshore.web_gagebu.feature.auth.oidc.OidcSuccessHandler;
 import me.redshore.web_gagebu.feature.auth.resolver.CustomBearerTokenResolver;
@@ -38,6 +39,8 @@ public class SecurityConfig {
 
     private final OidcSuccessHandler successHandler;
 
+    private final OidcRequestRepository oidcRequestRepository;
+
     private final CustomOidcUserService oidcUserService;
 
     private final CustomBearerTokenResolver bearerTokenResolver;
@@ -59,12 +62,13 @@ public class SecurityConfig {
             .formLogin(AbstractHttpConfigurer::disable)
             .httpBasic(AbstractHttpConfigurer::disable)
             .sessionManagement(session -> session
-                .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED));
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
         http
             .oauth2Login(oauth2 -> oauth2
                 .authorizationEndpoint(endpoint -> endpoint
                     .baseUri(AUTHZ_BASE_URI)
+                    .authorizationRequestRepository(this.oidcRequestRepository)
                     .authorizationRequestResolver(this.oidcRequestResolver))
                 .redirectionEndpoint(endpoint -> endpoint
                     .baseUri(CODE_BASE_URI + "/*"))
