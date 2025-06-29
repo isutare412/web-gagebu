@@ -1,6 +1,9 @@
 package me.redshore.web_gagebu.feature.user.service;
 
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import me.redshore.web_gagebu.common.error.AppException;
+import me.redshore.web_gagebu.common.error.ErrorCode;
 import me.redshore.web_gagebu.feature.user.domain.User;
 import me.redshore.web_gagebu.feature.user.domain.UserRole;
 import me.redshore.web_gagebu.feature.user.dto.UserDto;
@@ -17,6 +20,14 @@ public class UserService {
     private final UserMapper userMapper;
 
     private final UserRepository userRepository;
+
+    public UserDto getUser(UUID id) {
+        return this.userRepository.findById(id)
+                                  .map(this.userMapper::toDto)
+                                  .orElseThrow(
+                                      () -> new AppException(ErrorCode.NOT_FOUND, String.format(
+                                          "User with ID '%s' not found", id)));
+    }
 
     @Transactional
     public UserDto upsertUser(UserOidcUpsertCommand command) {

@@ -4,6 +4,7 @@ import me.redshore.web_gagebu.feature.auth.jwt.JwtUserPayload;
 import me.redshore.web_gagebu.feature.user.domain.User;
 import me.redshore.web_gagebu.feature.user.dto.UserDto;
 import me.redshore.web_gagebu.feature.user.dto.UserOidcUpsertCommand;
+import me.redshore.web_gagebu.feature.user.dto.response.UserView;
 import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")
@@ -15,4 +16,5 @@ public interface UserMapper {
 
     JwtUserPayload toJwtPayload(UserDto user);
 
+    UserView toView(UserDto userDto);
 }
