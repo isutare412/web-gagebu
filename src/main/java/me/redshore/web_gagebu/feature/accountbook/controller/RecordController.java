@@ -8,8 +8,10 @@ import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.redshore.web_gagebu.common.config.OpenApiConfig;
+import me.redshore.web_gagebu.feature.accountbook.validator.MemberValidator;
 import me.redshore.web_gagebu.feature.accountbook.validator.RecordValidator;
-import org.springframework.security.access.prepost.PreAuthorize;
+import me.redshore.web_gagebu.feature.auth.jwt.JwtUserPayload;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,11 +30,13 @@ import org.springframework.web.bind.annotation.RestController;
 public class RecordController {
 
     private final RecordValidator recordValidator;
+    private final MemberValidator memberValidator;
 
     @GetMapping("/account-books/{accountBookId}/records/{recordId}")
     @Operation(summary = "Get record by ID")
-    @PreAuthorize("@memberValidator.checkUserIsMemberOfAccountBook(#accountBookId)")
-    public String getRecord(@PathVariable UUID accountBookId, @PathVariable UUID recordId) {
+    public String getRecord(@AuthenticationPrincipal JwtUserPayload jwtUserPayload,
+                            @PathVariable UUID accountBookId, @PathVariable UUID recordId) {
+        this.memberValidator.checkUserIsMemberOfAccountBook(jwtUserPayload.getId(), accountBookId);
         this.recordValidator.checkRecordContainedInAccountBook(accountBookId, recordId);
 
         log.debug("Account Book ID: {}, Record ID: {}", accountBookId, recordId);
