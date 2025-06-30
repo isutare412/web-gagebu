@@ -50,5 +50,4 @@ public class MemberValidator {
             .orElseThrow(() -> new AppException(ErrorCode.UNAUTHORIZED,
                                                 "User is not authenticated"));
     }
-
 }
