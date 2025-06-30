@@ -32,18 +32,12 @@ public class JwtAutoRenewalFilter extends OncePerRequestFilter {
                                                                       ServletException,
                                                                       IOException {
         try {
-            final var tokenOptional = getAuthenticationToken();
-            if (tokenOptional.isEmpty()) {
-                return;
-            }
-
-            final var token = tokenOptional.get();
-            if (!isRenewalRequired(token)) {
-                return;
-            }
-
-            log.info("Renew JWT token of user '{}'", token.getPayload().getId());
-            this.jwtCookieSetter.setCookie(response, token.getPayload());
+            getAuthenticationToken()
+                .filter(this::isRenewalRequired)
+                .ifPresent(token -> {
+                    log.info("Renew JWT token of user '{}'", token.getPayload().getId());
+                    this.jwtCookieSetter.setCookie(response, token.getPayload());
+                });
         } finally {
             filterChain.doFilter(request, response);
         }
