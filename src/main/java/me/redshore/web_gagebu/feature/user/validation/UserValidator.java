@@ -1,4 +1,4 @@
-package me.redshore.web_gagebu.feature.user.validator;
+package me.redshore.web_gagebu.feature.user.validation;
 
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -20,4 +20,5 @@ public class UserValidator {
                                    "User with ID '%s' is not allowed to access user with ID '%s'",
                                    requesterId, userId));
     }
+
 }

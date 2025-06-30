@@ -60,3 +60,12 @@ app:
   invitation:
     cleanup:
       rate: 5m
+
+  category:
+    defaults:
+      - "Etc"
+      - "Food"
+      - "Transport"
+      - "Health"
+      - "Entertainment"
+      - "Shopping"

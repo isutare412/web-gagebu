@@ -1,4 +1,4 @@
-package me.redshore.web_gagebu.feature.accountbook.validator;
+package me.redshore.web_gagebu.feature.accountbook.validation;
 
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -35,4 +35,5 @@ public class MemberValidator {
                                        userId, accountBookId));
         }
     }
+
 }

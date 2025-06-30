@@ -12,6 +12,7 @@ import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -30,6 +31,7 @@ import me.redshore.web_gagebu.feature.user.domain.User;
 @NoArgsConstructor
 @Getter
 @Setter
+@Builder
 public class Member {
 
     @Id

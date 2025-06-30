@@ -13,7 +13,7 @@ import me.redshore.web_gagebu.feature.user.dto.response.GetCurrentUserResponse;
 import me.redshore.web_gagebu.feature.user.dto.response.GetUserResponse;
 import me.redshore.web_gagebu.feature.user.mapping.UserMapper;
 import me.redshore.web_gagebu.feature.user.service.UserService;
-import me.redshore.web_gagebu.feature.user.validator.UserValidator;
+import me.redshore.web_gagebu.feature.user.validation.UserValidator;
 import org.springframework.lang.Nullable;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,8 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "User")
 @SecurityRequirements({
     @SecurityRequirement(name = OpenApiConfig.BEARER_TOKEN_AUTH),
-    @SecurityRequirement(name = OpenApiConfig.COOKIE_TOKEN_AUTH)
-})
+    @SecurityRequirement(name = OpenApiConfig.COOKIE_TOKEN_AUTH)})
 public class UserController {
 
     private final UserService userService;
@@ -60,4 +59,5 @@ public class UserController {
                        .map(userDto -> new GetUserResponse(this.userMapper.toView(userDto)))
                        .get();
     }
+
 }

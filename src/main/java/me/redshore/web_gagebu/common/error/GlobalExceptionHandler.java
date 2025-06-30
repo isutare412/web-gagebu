@@ -1,10 +1,14 @@
 package me.redshore.web_gagebu.common.error;
 
+import java.util.Optional;
+import java.util.function.Predicate;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.client.HttpStatusCodeException;
@@ -17,50 +21,25 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(AppException.class)
     public ResponseEntity<ErrorResponse> handleAppException(AppException ex) {
-        var errorCode = ex.getErrorCode();
-        var errorResponse = new ErrorResponse(errorCode, ex.getMessage());
-        var httpStatus = errorCode.toHttpStatus();
+        final var errorCode = ex.getErrorCode();
+        final var errorResponse = new ErrorResponse(errorCode, ex.getMessage());
+        final var httpStatus = errorCode.toHttpStatus();
 
         logErrorResponse(httpStatus, ex);
         return new ResponseEntity<>(errorResponse, httpStatus);
     }
 
-    @ExceptionHandler(NoResourceFoundException.class)
-    public ResponseEntity<ErrorResponse> handlNoResourceFoundException(
-        NoResourceFoundException ex) {
-        var httpStatus = HttpStatus.NOT_FOUND;
-        var errorCode = ErrorCode.ofHttpStatus(httpStatus);
-        var errorResponse = new ErrorResponse(errorCode, ex.getMessage());
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(
+        MethodArgumentNotValidException ex) {
 
-        logErrorResponse(httpStatus, ex);
-        return new ResponseEntity<>(errorResponse, httpStatus);
-    }
+        final var message = Optional.ofNullable(ex.getBindingResult().getFieldError())
+                                    .map(FieldError::getDefaultMessage)
+                                    .orElse("Validation failed");
 
-    @ExceptionHandler(HttpStatusCodeException.class)
-    public ResponseEntity<ErrorResponse> handleHttpStatusCodeException(HttpStatusCodeException ex) {
-        var httpStatus = toHttpStatus(ex.getStatusCode().value());
-        var errorCode = ErrorCode.ofHttpStatus(httpStatus);
-        var errorResponse = new ErrorResponse(errorCode, ex.getMessage());
-
-        logErrorResponse(httpStatus, ex);
-        return new ResponseEntity<>(errorResponse, httpStatus);
-    }
-
-    @ExceptionHandler(AuthenticationException.class)
-    public ResponseEntity<ErrorResponse> handleAuthenticationException(AuthenticationException ex) {
-        var httpStatus = HttpStatus.UNAUTHORIZED;
-        var errorCode = ErrorCode.ofHttpStatus(httpStatus);
-        var errorResponse = new ErrorResponse(errorCode, ex.getMessage());
-
-        logErrorResponse(httpStatus, ex);
-        return new ResponseEntity<>(errorResponse, httpStatus);
-    }
-
-    @ExceptionHandler(AccessDeniedException.class)
-    public ResponseEntity<ErrorResponse> handleAccessDeniedException(AccessDeniedException ex) {
-        var httpStatus = HttpStatus.FORBIDDEN;
-        var errorCode = ErrorCode.ofHttpStatus(httpStatus);
-        var errorResponse = new ErrorResponse(errorCode, ex.getMessage());
+        final var httpStatus = HttpStatus.BAD_REQUEST;
+        final var errorCode = ErrorCode.ofHttpStatus(httpStatus);
+        final var errorResponse = new ErrorResponse(errorCode, message);
 
         logErrorResponse(httpStatus, ex);
         return new ResponseEntity<>(errorResponse, httpStatus);
@@ -69,24 +48,67 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ResponseEntity<ErrorResponse> handleMethodArgumentTypeMismatchException(
         MethodArgumentTypeMismatchException ex) {
-        var httpStatus = HttpStatus.UNPROCESSABLE_ENTITY;
-        var errorCode = ErrorCode.ofHttpStatus(httpStatus);
-        var errorResponse = new ErrorResponse(errorCode, ex.getMessage());
+
+        final var httpStatus = HttpStatus.UNPROCESSABLE_ENTITY;
+        final var errorCode = ErrorCode.ofHttpStatus(httpStatus);
+        final var errorResponse = new ErrorResponse(errorCode, ex.getMessage());
+
+        logErrorResponse(httpStatus, ex);
+        return new ResponseEntity<>(errorResponse, httpStatus);
+    }
+
+    @ExceptionHandler(NoResourceFoundException.class)
+    public ResponseEntity<ErrorResponse> handlNoResourceFoundException(
+        NoResourceFoundException ex) {
+
+        final var httpStatus = HttpStatus.NOT_FOUND;
+        final var errorCode = ErrorCode.ofHttpStatus(httpStatus);
+        final var errorResponse = new ErrorResponse(errorCode, ex.getMessage());
+
+        logErrorResponse(httpStatus, ex);
+        return new ResponseEntity<>(errorResponse, httpStatus);
+    }
+
+    @ExceptionHandler(HttpStatusCodeException.class)
+    public ResponseEntity<ErrorResponse> handleHttpStatusCodeException(HttpStatusCodeException ex) {
+        final var httpStatus = toHttpStatus(ex.getStatusCode().value());
+        final var errorCode = ErrorCode.ofHttpStatus(httpStatus);
+        final var errorResponse = new ErrorResponse(errorCode, ex.getMessage());
+
+        logErrorResponse(httpStatus, ex);
+        return new ResponseEntity<>(errorResponse, httpStatus);
+    }
+
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<ErrorResponse> handleAuthenticationException(AuthenticationException ex) {
+        final var httpStatus = HttpStatus.UNAUTHORIZED;
+        final var errorCode = ErrorCode.ofHttpStatus(httpStatus);
+        final var errorResponse = new ErrorResponse(errorCode, ex.getMessage());
+
+        logErrorResponse(httpStatus, ex);
+        return new ResponseEntity<>(errorResponse, httpStatus);
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ErrorResponse> handleAccessDeniedException(AccessDeniedException ex) {
+        final var httpStatus = HttpStatus.FORBIDDEN;
+        final var errorCode = ErrorCode.ofHttpStatus(httpStatus);
+        final var errorResponse = new ErrorResponse(errorCode, ex.getMessage());
 
         logErrorResponse(httpStatus, ex);
         return new ResponseEntity<>(errorResponse, httpStatus);
     }
 
     @ExceptionHandler(UnsupportedOperationException.class)
-    public ResponseEntity<ErrorResponse> handleUnsupportedOperationException(UnsupportedOperationException ex) {
-        var message = ex.getMessage();
-        if (message == null || message.isBlank()) {
-            message = "This operation is not supported";
-        }
+    public ResponseEntity<ErrorResponse> handleUnsupportedOperationException(
+        UnsupportedOperationException ex) {
 
-        var httpStatus = HttpStatus.NOT_IMPLEMENTED;
-        var errorCode = ErrorCode.ofHttpStatus(httpStatus);
-        var errorResponse = new ErrorResponse(errorCode, message);
+        final var message = Optional.ofNullable(ex.getMessage())
+                                    .filter(Predicate.not(String::isBlank))
+                                    .orElse("This operation is not supported");
+        final var httpStatus = HttpStatus.NOT_IMPLEMENTED;
+        final var errorCode = ErrorCode.ofHttpStatus(httpStatus);
+        final var errorResponse = new ErrorResponse(errorCode, message);
 
         logErrorResponse(httpStatus, ex);
         return new ResponseEntity<>(errorResponse, httpStatus);
@@ -94,9 +116,9 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleAllUncaughtException(Exception ex) {
-        var httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
-        var errorCode = ErrorCode.ofHttpStatus(httpStatus);
-        var errorResponse = new ErrorResponse(errorCode, ex.getMessage());
+        final var httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+        final var errorCode = ErrorCode.ofHttpStatus(httpStatus);
+        final var errorResponse = new ErrorResponse(errorCode, ex.getMessage());
 
         logErrorResponse(httpStatus, ex);
         return new ResponseEntity<>(errorResponse, httpStatus);

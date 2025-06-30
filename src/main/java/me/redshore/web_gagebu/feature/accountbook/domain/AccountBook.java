@@ -1,5 +1,6 @@
 package me.redshore.web_gagebu.feature.accountbook.domain;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -35,11 +36,11 @@ public class AccountBook {
     @Column(length = 64, nullable = false)
     private String name;
 
-    @OneToMany(mappedBy = "accountBook", orphanRemoval = true)
+    @OneToMany(mappedBy = "accountBook", orphanRemoval = true, cascade = {CascadeType.PERSIST})
     @Builder.Default
     private List<Member> members = new ArrayList<>();
 
-    @OneToMany(mappedBy = "accountBook", orphanRemoval = true)
+    @OneToMany(mappedBy = "accountBook", orphanRemoval = true, cascade = {CascadeType.PERSIST})
     @Builder.Default
     private List<Category> categories = new ArrayList<>();
 
@@ -48,6 +49,18 @@ public class AccountBook {
 
     @Column(nullable = false)
     private ZonedDateTime updatedAt;
+
+    public void addMember(Member member) {
+        this.members.add(member);
+        member.setAccountBook(this);
+    }
+
+    public void addCategories(List<Category> categories) {
+        categories.forEach(category -> {
+            this.categories.add(category);
+            category.setAccountBook(this);
+        });
+    }
 
     @PrePersist
     void prePersist() {
