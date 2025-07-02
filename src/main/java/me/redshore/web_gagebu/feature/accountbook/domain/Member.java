@@ -16,6 +16,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import me.redshore.web_gagebu.common.entity.BaseEntity;
 import me.redshore.web_gagebu.feature.user.domain.User;
 
 @Entity
@@ -32,7 +33,7 @@ import me.redshore.web_gagebu.feature.user.domain.User;
 @Getter
 @Setter
 @Builder
-public class Member {
+public class Member extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

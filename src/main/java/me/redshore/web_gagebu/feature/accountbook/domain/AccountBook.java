@@ -7,10 +7,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
-import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -19,6 +16,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import me.redshore.web_gagebu.common.entity.BaseEntity;
 
 @Entity
 @Table(name = "account_books")
@@ -27,7 +25,7 @@ import lombok.Setter;
 @Builder
 @Getter
 @Setter
-public class AccountBook {
+public class AccountBook extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -44,12 +42,6 @@ public class AccountBook {
     @Builder.Default
     private List<Category> categories = new ArrayList<>();
 
-    @Column(nullable = false)
-    private ZonedDateTime createdAt;
-
-    @Column(nullable = false)
-    private ZonedDateTime updatedAt;
-
     public void addMember(Member member) {
         this.members.add(member);
         member.setAccountBook(this);
@@ -60,17 +52,6 @@ public class AccountBook {
             this.categories.add(category);
             category.setAccountBook(this);
         });
-    }
-
-    @PrePersist
-    void prePersist() {
-        this.createdAt = ZonedDateTime.now();
-        this.updatedAt = ZonedDateTime.now();
-    }
-
-    @PreUpdate
-    void preUpdate() {
-        this.updatedAt = ZonedDateTime.now();
     }
 
 }

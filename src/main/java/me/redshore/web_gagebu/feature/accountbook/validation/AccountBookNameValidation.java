@@ -1,4 +1,4 @@
-package me.redshore.web_gagebu.feature.user.validation;
+package me.redshore.web_gagebu.feature.accountbook.validation;
 
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;

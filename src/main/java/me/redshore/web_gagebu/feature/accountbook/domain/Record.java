@@ -9,16 +9,14 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import java.time.LocalDate;
-import java.time.ZonedDateTime;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import me.redshore.web_gagebu.common.entity.BaseEntity;
 import me.redshore.web_gagebu.feature.user.domain.User;
 
 @Entity
@@ -31,7 +29,7 @@ import me.redshore.web_gagebu.feature.user.domain.User;
 @NoArgsConstructor
 @Getter
 @Setter
-public class Record {
+public class Record extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -50,7 +48,7 @@ public class Record {
     private User user;
 
     @Column(length = 16, nullable = false)
-    RecordType type;
+    RecordType recordType;
 
     @Column(nullable = false)
     private Long amount;
@@ -63,22 +61,5 @@ public class Record {
 
     @Column(nullable = false)
     private LocalDate date;
-
-    @Column(nullable = false)
-    private ZonedDateTime createdAt;
-
-    @Column(nullable = false)
-    private ZonedDateTime updatedAt;
-
-    @PrePersist
-    void prePersist() {
-        this.createdAt = ZonedDateTime.now();
-        this.updatedAt = ZonedDateTime.now();
-    }
-
-    @PreUpdate
-    void preUpdate() {
-        this.updatedAt = ZonedDateTime.now();
-    }
 
 }

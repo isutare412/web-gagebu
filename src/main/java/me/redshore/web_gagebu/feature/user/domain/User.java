@@ -5,11 +5,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
-import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -18,6 +15,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import me.redshore.web_gagebu.common.entity.BaseTimeEntity;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 import org.springframework.lang.Nullable;
@@ -33,7 +31,7 @@ import org.springframework.lang.Nullable;
 @Getter
 @Setter
 @Builder
-public class User {
+public class User extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -41,6 +39,7 @@ public class User {
 
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(columnDefinition = "jsonb", nullable = false)
+    @Builder.Default
     private List<UserRole> roles = new ArrayList<>();
 
     @Column(length = 64, nullable = false)
@@ -60,29 +59,12 @@ public class User {
     @Nullable
     private String email;
 
-    @Column(nullable = false)
-    private ZonedDateTime createdAt;
-
-    @Column(nullable = false)
-    private ZonedDateTime updatedAt;
-
     public boolean addRole(UserRole role) {
         if (!this.roles.contains(role)) {
             this.roles.add(role);
             return true;
         }
         return false;
-    }
-
-    @PrePersist
-    void prePersist() {
-        this.createdAt = ZonedDateTime.now();
-        this.updatedAt = ZonedDateTime.now();
-    }
-
-    @PreUpdate
-    void preUpdate() {
-        this.updatedAt = ZonedDateTime.now();
     }
 
 }

@@ -1,7 +1,5 @@
 package me.redshore.web_gagebu.feature.accountbook.domain;
 
-import io.micrometer.common.lang.Nullable;
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -17,6 +15,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import me.redshore.web_gagebu.common.entity.BaseEntity;
+import org.springframework.lang.Nullable;
 
 @Entity
 @Table(
@@ -30,7 +30,7 @@ import lombok.Setter;
 @Builder
 @Getter
 @Setter
-public class Invitation {
+public class Invitation extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -40,7 +40,6 @@ public class Invitation {
     @JoinColumn(name = "account_book_id", nullable = false)
     private AccountBook accountBook;
 
-    @Column(nullable = true)
     private @Nullable ZonedDateTime expiration;
 
 }

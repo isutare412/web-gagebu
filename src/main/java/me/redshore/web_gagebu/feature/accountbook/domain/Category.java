@@ -7,17 +7,15 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
-import java.time.ZonedDateTime;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import me.redshore.web_gagebu.common.entity.BaseEntity;
 
 @Entity
 @Table(
@@ -30,7 +28,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Builder
-public class Category {
+public class Category extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -45,22 +43,5 @@ public class Category {
 
     @Column(nullable = false)
     private Boolean isBasic;
-
-    @Column(nullable = false)
-    private ZonedDateTime createdAt;
-
-    @Column(nullable = false)
-    private ZonedDateTime updatedAt;
-
-    @PrePersist
-    void prePersist() {
-        this.createdAt = ZonedDateTime.now();
-        this.updatedAt = ZonedDateTime.now();
-    }
-
-    @PreUpdate
-    void preUpdate() {
-        this.updatedAt = ZonedDateTime.now();
-    }
 
 }
