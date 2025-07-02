@@ -2,18 +2,23 @@ package me.redshore.web_gagebu.feature.accountbook.repository;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 import java.time.ZonedDateTime;
+import me.redshore.web_gagebu.common.config.JpaAuditingConfig;
+import me.redshore.web_gagebu.common.config.QuerydslConfig;
+import me.redshore.web_gagebu.feature.accountbook.domain.AccountBook;
+import me.redshore.web_gagebu.feature.accountbook.domain.Invitation;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.transaction.annotation.Transactional;
-import me.redshore.web_gagebu.feature.accountbook.domain.AccountBook;
-import me.redshore.web_gagebu.feature.accountbook.domain.Invitation;
 
 @DataJpaTest
+@Import({JpaAuditingConfig.class, QuerydslConfig.class})
 class InvitationRepositoryTest {
 
     @Autowired

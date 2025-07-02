@@ -5,12 +5,9 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import me.redshore.web_gagebu.common.config.OpenApiConfig;
-import me.redshore.web_gagebu.common.error.AppException;
-import me.redshore.web_gagebu.common.error.ErrorCode;
 import me.redshore.web_gagebu.feature.accountbook.dto.AccountBookCreateCommand;
 import me.redshore.web_gagebu.feature.accountbook.dto.AccountBookUpdateCommand;
 import me.redshore.web_gagebu.feature.accountbook.dto.request.AccountBookCreateRequest;
@@ -58,6 +55,7 @@ public class AccountBookController {
     @Operation(summary = "List account books of user")
     public AccountBookListResponse listAccountBooks(
         @AuthenticationPrincipal JwtUserPayload jwtUserPayload) {
+
         final var accountBookViews =
             this.accountBookService.listAccountBooksOfUser(jwtUserPayload.getId())
                                    .stream()
@@ -71,14 +69,12 @@ public class AccountBookController {
     @Operation(summary = "Create account book")
     public AccountBookView createAccountBook(@AuthenticationPrincipal JwtUserPayload jwtUserPayload,
                                              @Valid @RequestBody AccountBookCreateRequest body) {
-        return Optional.of(AccountBookCreateCommand.builder()
-                                                   .userId(jwtUserPayload.getId())
-                                                   .accountBookName(body.name())
-                                                   .build())
-                       .map(this.accountBookService::createAccountBook)
-                       .map(this.accountBookMapper::toView)
-                       .orElseThrow(() -> new AppException(ErrorCode.INTERNAL_SERVER_ERROR,
-                                                           "Failed to create account book"));
+        final var createCommand = AccountBookCreateCommand.builder()
+                                                          .userId(jwtUserPayload.getId())
+                                                          .accountBookName(body.name())
+                                                          .build();
+        final var accountBookDto = this.accountBookService.createAccountBook(createCommand);
+        return this.accountBookMapper.toView(accountBookDto);
     }
 
     @PutMapping("/account-books/{accountBookId}")
@@ -88,14 +84,12 @@ public class AccountBookController {
                                              @Valid @RequestBody AccountBookUpdateRequest body) {
         this.memberValidator.checkUserIsOwnerOfAccountBook(jwtUserPayload.getId(), accountBookId);
 
-        return Optional.of(AccountBookUpdateCommand.builder()
-                                                   .accountBookId(accountBookId)
-                                                   .accountBookName(body.name())
-                                                   .build())
-                       .map(this.accountBookService::updateAccountBook)
-                       .map(this.accountBookMapper::toView)
-                       .orElseThrow(() -> new AppException(ErrorCode.INTERNAL_SERVER_ERROR,
-                                                           "Failed to update account book"));
+        final var updateCommand = AccountBookUpdateCommand.builder()
+                                                          .accountBookId(accountBookId)
+                                                          .accountBookName(body.name())
+                                                          .build();
+        final var accountBookDto = this.accountBookService.updateAccountBook(updateCommand);
+        return this.accountBookMapper.toView(accountBookDto);
     }
 
     @DeleteMapping("/account-books/{accountBookId}")

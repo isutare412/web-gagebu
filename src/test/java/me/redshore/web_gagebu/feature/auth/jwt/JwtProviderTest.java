@@ -2,6 +2,7 @@ package me.redshore.web_gagebu.feature.auth.jwt;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 import java.util.UUID;
@@ -16,103 +17,103 @@ import org.springframework.boot.test.context.SpringBootTest;
 @SpringBootTest
 public class JwtProviderTest {
 
-  @Autowired
-  private JwtProvider jwtProvider;
+    @Autowired
+    private JwtProvider jwtProvider;
 
-  @Test
-  void contextLoads() {
-    assertNotNull(jwtProvider);
-  }
-
-  @Nested
-  class Describe_parseToken {
+    @Test
+    void contextLoads() {
+        assertNotNull(jwtProvider);
+    }
 
     @Nested
-    class Context_with_valid_payload {
+    class Describe_parseToken {
 
-      private JwtUserPayload userJwtPayload;
+        @Nested
+        class Context_with_valid_payload {
 
-      @BeforeEach
-      void setUp() {
-        userJwtPayload = JwtUserPayload.builder()
-                                       .id(UUID.randomUUID())
-                                       .roles(List.of(UserRole.USER))
-                                       .nickname("testuser")
-                                       .idpType(IdpType.GOOGLE)
-                                       .idpIdentifier("google-id-12345")
-                                       .pictureUrl("http://example.com/picture.jpg")
-                                       .email("tester@gmail.com")
-                                       .build();
-      }
+            private JwtUserPayload userJwtPayload;
 
-      @Test
-      void it_should_parse_token() {
-        String token = jwtProvider.createToken(this.userJwtPayload);
-        JwtUserPayload payload = jwtProvider.parseToken(token);
-        assertEquals(userJwtPayload, payload);
-      }
+            @BeforeEach
+            void setUp() {
+                userJwtPayload = JwtUserPayload.builder()
+                                               .id(UUID.randomUUID())
+                                               .roles(List.of(UserRole.USER))
+                                               .nickname("testuser")
+                                               .idpType(IdpType.GOOGLE)
+                                               .idpIdentifier("google-id-12345")
+                                               .pictureUrl("https://example.com/picture.jpg")
+                                               .email("tester@gmail.com")
+                                               .build();
+            }
+
+            @Test
+            void it_should_parse_token() {
+                String token = jwtProvider.createToken(this.userJwtPayload);
+                JwtUserPayload payload = jwtProvider.parseToken(token);
+                assertEquals(userJwtPayload, payload);
+            }
+
+        }
+
+        @Nested
+        class Context_with_null_fields {
+
+            private JwtUserPayload samplePayload;
+
+            @BeforeEach
+            void setUp() {
+                samplePayload = JwtUserPayload.builder()
+                                              .id(UUID.randomUUID())
+                                              .roles(List.of(UserRole.USER))
+                                              .nickname("testuser")
+                                              .idpType(IdpType.GOOGLE)
+                                              .idpIdentifier("google-id-12345")
+                                              .pictureUrl(null)
+                                              .email(null)
+                                              .build();
+            }
+
+            @Test
+            void it_should_parse_token() {
+                String token = jwtProvider.createToken(this.samplePayload);
+                JwtUserPayload payload = jwtProvider.parseToken(token);
+                assertEquals(this.samplePayload, payload);
+            }
+
+        }
 
     }
 
     @Nested
-    class Context_with_null_fields {
+    class Describe_validateToken {
 
-      private JwtUserPayload samplePayload;
+        @Nested
+        class Context_with_valid_token {
 
-      @BeforeEach
-      void setUp() {
-        samplePayload = JwtUserPayload.builder()
-                                      .id(UUID.randomUUID())
-                                      .roles(List.of(UserRole.USER))
-                                      .nickname("testuser")
-                                      .idpType(IdpType.GOOGLE)
-                                      .idpIdentifier("google-id-12345")
-                                      .pictureUrl(null)
-                                      .email(null)
-                                      .build();
-      }
+            private JwtUserPayload samplePayload;
 
-      @Test
-      void it_should_parse_token() {
-        String token = jwtProvider.createToken(this.samplePayload);
-        JwtUserPayload payload = jwtProvider.parseToken(token);
-        assertEquals(this.samplePayload, payload);
-      }
+            @BeforeEach
+            void setUp() {
+                samplePayload = JwtUserPayload.builder()
+                                              .id(UUID.randomUUID())
+                                              .roles(List.of(UserRole.USER))
+                                              .nickname("testuser")
+                                              .idpType(IdpType.GOOGLE)
+                                              .idpIdentifier("google-id-12345")
+                                              .pictureUrl("https://example.com/picture.jpg")
+                                              .email("tester@gmail.com")
+                                              .build();
+            }
 
-    }
+            @Test
+            void it_should_validate_token() {
+                String token = jwtProvider.createToken(this.samplePayload);
+                boolean isValid = jwtProvider.validateToken(token);
+                assertTrue(isValid);
+            }
 
-  }
-
-  @Nested
-  class Describe_validateToken {
-
-    @Nested
-    class Context_with_valid_token {
-
-      private JwtUserPayload samplePayload;
-
-      @BeforeEach
-      void setUp() {
-        samplePayload = JwtUserPayload.builder()
-                                      .id(UUID.randomUUID())
-                                      .roles(List.of(UserRole.USER))
-                                      .nickname("testuser")
-                                      .idpType(IdpType.GOOGLE)
-                                      .idpIdentifier("google-id-12345")
-                                      .pictureUrl("http://example.com/picture.jpg")
-                                      .email("tester@gmail.com")
-                                      .build();
-      }
-
-      @Test
-      void it_should_validate_token() {
-        String token = jwtProvider.createToken(this.samplePayload);
-        boolean isValid = jwtProvider.validateToken(token);
-        assertEquals(true, isValid);
-      }
+        }
 
     }
-
-  }
 
 }

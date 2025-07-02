@@ -9,9 +9,9 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring")
 public interface MemberMapper {
 
-    @Mapping(source = "user.id", target = "userId")
-    @Mapping(source = "user.nickname", target = "nickname")
-    @Mapping(source = "user.pictureUrl", target = "pictureUrl")
+    @Mapping(target = "userId", source = "user.id")
+    @Mapping(target = "nickname", source = "user.nickname")
+    @Mapping(target = "pictureUrl", source = "user.pictureUrl")
     MemberDto toDto(Member member);
 
     MemberView toView(MemberDto memberDto);

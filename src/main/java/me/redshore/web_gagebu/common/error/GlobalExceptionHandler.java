@@ -5,6 +5,7 @@ import java.util.function.Predicate;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.FieldError;
@@ -50,6 +51,18 @@ public class GlobalExceptionHandler {
         MethodArgumentTypeMismatchException ex) {
 
         final var httpStatus = HttpStatus.UNPROCESSABLE_ENTITY;
+        final var errorCode = ErrorCode.ofHttpStatus(httpStatus);
+        final var errorResponse = new ErrorResponse(errorCode, ex.getMessage());
+
+        logErrorResponse(httpStatus, ex);
+        return new ResponseEntity<>(errorResponse, httpStatus);
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ErrorResponse> handleHttpMessageNotReadableException(
+        HttpMessageNotReadableException ex) {
+
+        final var httpStatus = HttpStatus.BAD_REQUEST;
         final var errorCode = ErrorCode.ofHttpStatus(httpStatus);
         final var errorResponse = new ErrorResponse(errorCode, ex.getMessage());
 

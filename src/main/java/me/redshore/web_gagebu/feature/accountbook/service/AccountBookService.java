@@ -1,8 +1,6 @@
 package me.redshore.web_gagebu.feature.accountbook.service;
 
-import jakarta.persistence.EntityManager;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import me.redshore.web_gagebu.common.config.properties.CategoryProperties;
@@ -30,7 +28,6 @@ public class AccountBookService {
 
     private final CategoryProperties categoryProperties;
 
-    private final EntityManager entityManager;
     private final AccountBookRepository accountBookRepository;
     private final MemberRepository memberRepository;
     private final UserRepository userRepository;
@@ -48,13 +45,10 @@ public class AccountBookService {
 
     @Transactional(readOnly = true)
     public List<AccountBookSummaryDto> listAccountBooksOfUser(UUID userId) {
-        return Optional.of(this.memberRepository.findAllByUserId(userId))
-                       .map(members ->
-                                members.stream()
-                                       .map(Member::getAccountBook)
-                                       .map(this.accountBookMapper::toSummaryDto)
-                                       .toList())
-                       .orElseGet(List::of);
+        return this.memberRepository.findAllByUserId(userId).stream()
+                                    .map(Member::getAccountBook)
+                                    .map(this.accountBookMapper::toSummaryDto)
+                                    .toList();
     }
 
     @Transactional
@@ -62,13 +56,11 @@ public class AccountBookService {
         return this.userRepository
             .findById(command.userId())
             .map(user -> {
-                final var member = buildMember(user);
-                final var defaultCategories = buildDefaultCategories();
                 var accountBook = AccountBook.builder()
                                              .name(command.accountBookName())
                                              .build();
-                accountBook.addMember(member);
-                accountBook.addCategories(defaultCategories);
+                accountBook.addMember(buildMember(user));
+                accountBook.addCategories(buildDefaultCategories());
 
                 accountBook = this.accountBookRepository.save(accountBook);
                 return accountBook;
@@ -85,7 +77,6 @@ public class AccountBookService {
             .findById(command.accountBookId())
             .map(accountBook -> {
                 mergeAccountBook(accountBook, command);
-                this.entityManager.flush();
                 return accountBook;
             })
             .map(this.accountBookMapper::toDto)

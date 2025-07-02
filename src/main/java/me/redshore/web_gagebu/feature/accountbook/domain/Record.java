@@ -51,7 +51,7 @@ public class Record extends BaseEntity {
     RecordType recordType;
 
     @Column(nullable = false)
-    private Long amount;
+    private long amount;
 
     @Column(length = 32, nullable = false)
     private String summary;

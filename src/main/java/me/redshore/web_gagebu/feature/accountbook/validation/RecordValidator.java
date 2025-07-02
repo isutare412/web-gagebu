@@ -1,11 +1,13 @@
 package me.redshore.web_gagebu.feature.accountbook.validation;
 
+import java.time.LocalDate;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import me.redshore.web_gagebu.common.error.AppException;
 import me.redshore.web_gagebu.common.error.ErrorCode;
 import me.redshore.web_gagebu.feature.accountbook.domain.Record;
 import me.redshore.web_gagebu.feature.accountbook.repository.RecordRepository;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,6 +30,17 @@ public class RecordValidator {
                                    String.format(
                                        "Record with ID '%s' does not belong to account book with ID '%s'",
                                        recordId, accountBookId));
+        }
+    }
+
+    public void checkDateRange(@Nullable LocalDate startDate, @Nullable LocalDate endDate) {
+        if (startDate == null || endDate == null) {
+            return;
+        }
+
+        if (startDate.isAfter(endDate)) {
+            throw new AppException(ErrorCode.BAD_REQUEST,
+                                   "Start date cannot be after end date");
         }
     }
 

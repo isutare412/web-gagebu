@@ -6,7 +6,10 @@ import java.util.UUID;
 
 public record CategoryView(
     UUID id,
-    @Schema(example = "Hobby") String name,
+
+    @Schema(example = "Hobby")
+    String name,
+
     Boolean isBasic,
     ZonedDateTime createdAt,
     ZonedDateTime updatedAt

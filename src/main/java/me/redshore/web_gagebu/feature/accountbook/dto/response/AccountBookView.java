@@ -7,9 +7,13 @@ import java.util.UUID;
 
 public record AccountBookView(
     UUID id,
-    @Schema(example = "My Account Book") String name,
+
+    @Schema(example = "My Account Book")
+    String name,
+
     List<MemberView> members,
     List<CategoryView> categories,
+
     ZonedDateTime createdAt,
     ZonedDateTime updatedAt
 ) {

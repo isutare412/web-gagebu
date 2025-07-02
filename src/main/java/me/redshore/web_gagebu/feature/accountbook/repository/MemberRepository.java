@@ -1,6 +1,7 @@
 package me.redshore.web_gagebu.feature.accountbook.repository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import me.redshore.web_gagebu.feature.accountbook.domain.Member;
 import me.redshore.web_gagebu.feature.accountbook.domain.MemberRole;
@@ -16,5 +17,7 @@ public interface MemberRepository extends JpaRepository<Member, UUID> {
                                                   MemberRole role);
 
     List<Member> findAllByUserId(UUID userId);
+
+    Optional<Member> findByAccountBookIdAndUserId(UUID accountBookId, UUID userId);
 
 }

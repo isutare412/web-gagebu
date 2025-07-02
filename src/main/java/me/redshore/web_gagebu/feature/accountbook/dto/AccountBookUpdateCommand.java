@@ -4,6 +4,9 @@ import java.util.UUID;
 import lombok.Builder;
 
 @Builder
-public record AccountBookUpdateCommand(UUID accountBookId, String accountBookName) {
+public record AccountBookUpdateCommand(
+    UUID accountBookId,
+    String accountBookName
+) {
 
 }

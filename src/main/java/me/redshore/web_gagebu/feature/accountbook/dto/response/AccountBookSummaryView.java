@@ -6,7 +6,10 @@ import java.util.UUID;
 
 public record AccountBookSummaryView(
     UUID id,
-    @Schema(example = "My Account Book") String name,
+
+    @Schema(example = "My Account Book")
+    String name,
+
     ZonedDateTime createdAt,
     ZonedDateTime updatedAt
 ) {

@@ -16,8 +16,8 @@ public class InvitationService {
 
     @Transactional
     public void cleanUpExpiredInvitations() {
-        var now = ZonedDateTime.now();
-        long count = invitationRepository.deleteByExpirationBefore(now);
+        final var now = ZonedDateTime.now();
+        final var count = invitationRepository.deleteByExpirationBefore(now);
         if (count > 0) {
             log.info("Removed {} expired invitations", count);
         }
