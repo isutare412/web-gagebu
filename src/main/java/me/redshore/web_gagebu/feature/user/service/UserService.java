@@ -8,6 +8,7 @@ import me.redshore.web_gagebu.feature.user.domain.User;
 import me.redshore.web_gagebu.feature.user.domain.UserRole;
 import me.redshore.web_gagebu.feature.user.dto.UserDto;
 import me.redshore.web_gagebu.feature.user.dto.UserOidcUpsertCommand;
+import me.redshore.web_gagebu.feature.user.dto.UserUpdateCommand;
 import me.redshore.web_gagebu.feature.user.mapping.UserMapper;
 import me.redshore.web_gagebu.feature.user.repository.UserRepository;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,7 @@ public class UserService {
 
     private final UserRepository userRepository;
 
+    @Transactional(readOnly = true)
     public UserDto getUser(UUID id) {
         return this.userRepository.findById(id)
                                   .map(this.userMapper::toDto)
@@ -40,6 +42,17 @@ public class UserService {
         return this.userMapper.toDto(user);
     }
 
+    @Transactional
+    public UserDto updateUser(UserUpdateCommand command) {
+        final var user = this.userRepository
+            .findById(command.userId())
+            .orElseThrow(() -> new AppException(ErrorCode.NOT_FOUND,
+                                                String.format("User with ID '%s' not found",
+                                                              command.userId())));
+        user.setNickname(command.nickname());
+        return this.userMapper.toDto(user);
+    }
+
     private User mergeUser(User user, UserOidcUpsertCommand command) {
         user.setPictureUrl(command.pictureUrl());
         user.setEmail(command.email());
@@ -51,4 +64,5 @@ public class UserService {
         user.addRole(UserRole.USER);
         return user;
     }
+
 }

@@ -59,7 +59,7 @@ public enum ErrorCode {
      */
     SERVICE_UNAVAILABLE(HttpStatus.SERVICE_UNAVAILABLE);
 
-    private static Map<HttpStatus, ErrorCode> ERROR_CODE_BY_STATUS = new HashMap<>();
+    private static final Map<HttpStatus, ErrorCode> ERROR_CODE_BY_STATUS = new HashMap<>();
 
     private final HttpStatus httpStatus;
 

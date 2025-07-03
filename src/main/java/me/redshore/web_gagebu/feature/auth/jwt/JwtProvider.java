@@ -33,8 +33,6 @@ public class JwtProvider implements JwtDecoder {
 
     private final PrivateKey privateKey;
 
-    private final PublicKey publicKey;
-
     private final AuthProperties authProperties;
 
     private final JwtParser jwtParser;
@@ -43,8 +41,9 @@ public class JwtProvider implements JwtDecoder {
         throws NoSuchAlgorithmException, InvalidKeySpecException {
         this.authProperties = authProperties;
         this.privateKey = loadPrivateKey(authProperties.getJwt().getPrivateKey());
-        this.publicKey = loadPublicKey(authProperties.getJwt().getPublicKey());
-        this.jwtParser = Jwts.parser().verifyWith(this.publicKey).build();
+
+        final var publicKey = loadPublicKey(authProperties.getJwt().getPublicKey());
+        this.jwtParser = Jwts.parser().verifyWith(publicKey).build();
     }
 
     public String createToken(JwtUserPayload user) {
@@ -71,7 +70,7 @@ public class JwtProvider implements JwtDecoder {
     }
 
     public JwtUserPayload parseToken(String token)
-        throws UnsupportedJwtException, JwtException, IllegalArgumentException {
+        throws JwtException, IllegalArgumentException {
         Claims claims = parseClaims(token).getPayload();
         return new JwtUserPayload(claims);
     }
