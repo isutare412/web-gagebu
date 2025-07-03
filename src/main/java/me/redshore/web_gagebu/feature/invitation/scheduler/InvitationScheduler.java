@@ -1,7 +1,7 @@
-package me.redshore.web_gagebu.feature.accountbook.scheduler;
+package me.redshore.web_gagebu.feature.invitation.scheduler;
 
 import lombok.RequiredArgsConstructor;
-import me.redshore.web_gagebu.feature.accountbook.service.InvitationService;
+import me.redshore.web_gagebu.feature.invitation.service.InvitationService;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 

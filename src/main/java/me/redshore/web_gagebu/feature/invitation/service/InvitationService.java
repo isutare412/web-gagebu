@@ -1,9 +1,9 @@
-package me.redshore.web_gagebu.feature.accountbook.service;
+package me.redshore.web_gagebu.feature.invitation.service;
 
 import java.time.ZonedDateTime;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import me.redshore.web_gagebu.feature.accountbook.repository.InvitationRepository;
+import me.redshore.web_gagebu.feature.invitation.repository.InvitationRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

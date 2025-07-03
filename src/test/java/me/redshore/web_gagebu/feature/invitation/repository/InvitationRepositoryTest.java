@@ -1,4 +1,4 @@
-package me.redshore.web_gagebu.feature.accountbook.repository;
+package me.redshore.web_gagebu.feature.invitation.repository;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -7,7 +7,8 @@ import java.time.ZonedDateTime;
 import me.redshore.web_gagebu.common.config.JpaAuditingConfig;
 import me.redshore.web_gagebu.common.config.QuerydslConfig;
 import me.redshore.web_gagebu.feature.accountbook.domain.AccountBook;
-import me.redshore.web_gagebu.feature.accountbook.domain.Invitation;
+import me.redshore.web_gagebu.feature.accountbook.repository.AccountBookRepository;
+import me.redshore.web_gagebu.feature.invitation.domain.Invitation;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;

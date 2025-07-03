@@ -1,4 +1,4 @@
-package me.redshore.web_gagebu.feature.accountbook.domain;
+package me.redshore.web_gagebu.feature.invitation.domain;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -16,6 +16,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import me.redshore.web_gagebu.common.entity.BaseEntity;
+import me.redshore.web_gagebu.feature.accountbook.domain.AccountBook;
 import org.springframework.lang.Nullable;
 
 @Entity
@@ -23,8 +24,7 @@ import org.springframework.lang.Nullable;
     name = "invitations",
     indexes = {
         @Index(columnList = "expiration"),
-        @Index(columnList = "account_book_id")
-    })
+        @Index(columnList = "account_book_id")})
 @NoArgsConstructor(access = lombok.AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
