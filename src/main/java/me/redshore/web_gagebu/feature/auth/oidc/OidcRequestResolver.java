@@ -3,7 +3,7 @@ package me.redshore.web_gagebu.feature.auth.oidc;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
-import me.redshore.web_gagebu.feature.auth.SecurityConfig;
+import me.redshore.web_gagebu.common.config.SecurityConfig;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.oauth2.client.web.DefaultOAuth2AuthorizationRequestResolver;
 import org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequestResolver;

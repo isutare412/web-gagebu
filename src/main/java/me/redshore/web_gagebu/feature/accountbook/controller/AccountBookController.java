@@ -16,7 +16,6 @@ import me.redshore.web_gagebu.feature.accountbook.dto.response.AccountBookListRe
 import me.redshore.web_gagebu.feature.accountbook.dto.response.AccountBookView;
 import me.redshore.web_gagebu.feature.accountbook.mapping.AccountBookMapper;
 import me.redshore.web_gagebu.feature.accountbook.service.AccountBookService;
-import me.redshore.web_gagebu.feature.accountbook.validation.MemberValidator;
 import me.redshore.web_gagebu.feature.auth.jwt.JwtUserPayload;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -39,14 +38,10 @@ public class AccountBookController {
 
     private final AccountBookService accountBookService;
     private final AccountBookMapper accountBookMapper;
-    private final MemberValidator memberValidator;
 
     @GetMapping("/account-books/{accountBookId}")
     @Operation(summary = "Get account book by ID")
-    public AccountBookView getAccountBook(@AuthenticationPrincipal JwtUserPayload jwtUserPayload,
-                                          @PathVariable UUID accountBookId) {
-        this.memberValidator.checkUserIsMemberOfAccountBook(jwtUserPayload.getId(), accountBookId);
-
+    public AccountBookView getAccountBook(@PathVariable UUID accountBookId) {
         final var accountBookDto = this.accountBookService.getAccountBook(accountBookId);
         return this.accountBookMapper.toView(accountBookDto);
     }
@@ -79,11 +74,8 @@ public class AccountBookController {
 
     @PutMapping("/account-books/{accountBookId}")
     @Operation(summary = "Update account book by ID")
-    public AccountBookView updateAccountBook(@AuthenticationPrincipal JwtUserPayload jwtUserPayload,
-                                             @PathVariable UUID accountBookId,
+    public AccountBookView updateAccountBook(@PathVariable UUID accountBookId,
                                              @Valid @RequestBody AccountBookUpdateRequest body) {
-        this.memberValidator.checkUserIsOwnerOfAccountBook(jwtUserPayload.getId(), accountBookId);
-
         final var updateCommand = AccountBookUpdateCommand.builder()
                                                           .accountBookId(accountBookId)
                                                           .accountBookName(body.name())
@@ -94,10 +86,7 @@ public class AccountBookController {
 
     @DeleteMapping("/account-books/{accountBookId}")
     @Operation(summary = "Delete account book by ID")
-    public void deleteAccountBook(@AuthenticationPrincipal JwtUserPayload jwtUserPayload,
-                                  @PathVariable UUID accountBookId) {
-        this.memberValidator.checkUserIsOwnerOfAccountBook(jwtUserPayload.getId(), accountBookId);
-
+    public void deleteAccountBook(@PathVariable UUID accountBookId) {
         this.accountBookService.deleteAccountBook(accountBookId);
     }
 

@@ -11,6 +11,7 @@ import me.redshore.web_gagebu.feature.user.dto.UserOidcUpsertCommand;
 import me.redshore.web_gagebu.feature.user.dto.UserUpdateCommand;
 import me.redshore.web_gagebu.feature.user.mapping.UserMapper;
 import me.redshore.web_gagebu.feature.user.repository.UserRepository;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,6 +24,7 @@ public class UserService {
     private final UserRepository userRepository;
 
     @Transactional(readOnly = true)
+    @PreAuthorize("hasRole('ADMIN') or @userAuthorizer.canAccessUser(#id)")
     public UserDto getUser(UUID id) {
         return this.userRepository.findById(id)
                                   .map(this.userMapper::toDto)
@@ -43,6 +45,7 @@ public class UserService {
     }
 
     @Transactional
+    @PreAuthorize("hasRole('ADMIN') or @userAuthorizer.canModifyUser(#command.userId)")
     public UserDto updateUser(UserUpdateCommand command) {
         final var user = this.userRepository
             .findById(command.userId())

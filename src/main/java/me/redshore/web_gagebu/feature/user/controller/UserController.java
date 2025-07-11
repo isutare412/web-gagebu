@@ -15,7 +15,6 @@ import me.redshore.web_gagebu.feature.user.dto.response.GetCurrentUserResponse;
 import me.redshore.web_gagebu.feature.user.dto.response.UserView;
 import me.redshore.web_gagebu.feature.user.mapping.UserMapper;
 import me.redshore.web_gagebu.feature.user.service.UserService;
-import me.redshore.web_gagebu.feature.user.validation.UserValidator;
 import org.springframework.lang.Nullable;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -36,7 +35,6 @@ public class UserController {
 
     private final UserService userService;
     private final UserMapper userMapper;
-    private final UserValidator userValidator;
 
     @GetMapping("/users/me")
     @Operation(
@@ -55,21 +53,15 @@ public class UserController {
     @Operation(
         summary = "Get user information by ID",
         description = "Returns user information for the specified user ID.")
-    public UserView getUser(@AuthenticationPrincipal JwtUserPayload jwtUserPayload,
-                            @PathVariable UUID userId) {
-        this.userValidator.checkRequesterCanAccessUser(jwtUserPayload.getId(), userId);
-
+    public UserView getUser(@PathVariable UUID userId) {
         final var userDto = this.userService.getUser(userId);
         return this.userMapper.toView(userDto);
     }
 
     @PutMapping("/users/{userId}")
     @Operation(summary = "Update user data")
-    public UserView updateUser(@AuthenticationPrincipal JwtUserPayload jwtUserPayload,
-                               @PathVariable UUID userId,
+    public UserView updateUser(@PathVariable UUID userId,
                                @Valid @RequestBody UserUpdateRequest body) {
-        this.userValidator.checkRequesterCanAccessUser(jwtUserPayload.getId(), userId);
-
         final var updateCommand = this.userMapper.toUpdateCommand(body, userId);
         final var userDto = this.userService.updateUser(updateCommand);
         return this.userMapper.toView(userDto);

@@ -19,6 +19,7 @@ import me.redshore.web_gagebu.feature.accountbook.repository.AccountBookReposito
 import me.redshore.web_gagebu.feature.accountbook.repository.MemberRepository;
 import me.redshore.web_gagebu.feature.user.domain.User;
 import me.redshore.web_gagebu.feature.user.repository.UserRepository;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,6 +35,7 @@ public class AccountBookService {
     private final AccountBookMapper accountBookMapper;
 
     @Transactional(readOnly = true)
+    @PreAuthorize("hasRole('ADMIN') or @accountBookAuthorizer.canAccess(#id)")
     public AccountBookDto getAccountBook(UUID id) {
         return this.accountBookRepository
             .findById(id)
@@ -45,7 +47,8 @@ public class AccountBookService {
 
     @Transactional(readOnly = true)
     public List<AccountBookSummaryDto> listAccountBooksOfUser(UUID userId) {
-        return this.memberRepository.findAllByUserId(userId).stream()
+        return this.memberRepository.findAllByUserId(userId)
+                                    .stream()
                                     .map(Member::getAccountBook)
                                     .map(this.accountBookMapper::toSummaryDto)
                                     .toList();
@@ -72,6 +75,7 @@ public class AccountBookService {
     }
 
     @Transactional
+    @PreAuthorize("hasRole('ADMIN') or @accountBookAuthorizer.canModify(#command.accountBookId)")
     public AccountBookDto updateAccountBook(AccountBookUpdateCommand command) {
         return this.accountBookRepository
             .findById(command.accountBookId())
@@ -86,6 +90,7 @@ public class AccountBookService {
     }
 
     @Transactional
+    @PreAuthorize("hasRole('ADMIN') or @accountBookAuthorizer.canModify(#id)")
     public void deleteAccountBook(UUID id) {
         this.accountBookRepository.deleteById(id);
     }

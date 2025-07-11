@@ -10,10 +10,10 @@ import me.redshore.web_gagebu.feature.accountbook.validation.RecordDescriptionVa
 import me.redshore.web_gagebu.feature.accountbook.validation.RecordSummaryValidation;
 
 public record RecordCreateRequest(
-    @NotNull
+    @NotNull(message = "Category ID must not be null")
     UUID categoryId,
 
-    @NotNull
+    @NotNull(message = "Record type must not be null")
     RecordType recordType,
 
     @Schema(example = "4000")
@@ -28,7 +28,7 @@ public record RecordCreateRequest(
     @RecordDescriptionValidation
     String description,
 
-    @NotNull
+    @NotNull(message = "Date must not be null")
     LocalDate date
 ) {
 

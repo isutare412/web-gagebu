@@ -4,14 +4,19 @@ import io.jsonwebtoken.Claims;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import me.redshore.web_gagebu.common.error.AppException;
+import me.redshore.web_gagebu.common.error.ErrorCode;
 import me.redshore.web_gagebu.feature.user.domain.IdpType;
 import me.redshore.web_gagebu.feature.user.domain.UserRole;
 import org.springframework.lang.Nullable;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
 
 @EqualsAndHashCode
@@ -58,6 +63,16 @@ public class JwtUserPayload {
 
         List<?> rawRoles = claims.get(ROLES_CLAIM_KEY, List.class);
         this.roles = parseRoles(rawRoles);
+    }
+
+    public static JwtUserPayload fromSecurityContext() {
+        return Optional.ofNullable(
+                           SecurityContextHolder.getContext().getAuthentication())
+                       .map(Authentication::getPrincipal)
+                       .filter(JwtUserPayload.class::isInstance)
+                       .map(JwtUserPayload.class::cast)
+                       .orElseThrow(() -> new AppException(ErrorCode.UNAUTHORIZED,
+                                                           "User is not authenticated"));
     }
 
     public Map<String, Object> toMap() {

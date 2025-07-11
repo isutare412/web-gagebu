@@ -4,10 +4,12 @@ import java.util.UUID;
 import me.redshore.web_gagebu.feature.accountbook.domain.Record;
 import me.redshore.web_gagebu.feature.accountbook.dto.RecordCreateCommand;
 import me.redshore.web_gagebu.feature.accountbook.dto.RecordDto;
+import me.redshore.web_gagebu.feature.accountbook.dto.RecordListQuery;
 import me.redshore.web_gagebu.feature.accountbook.dto.RecordListResult;
 import me.redshore.web_gagebu.feature.accountbook.dto.RecordSummaryDto;
 import me.redshore.web_gagebu.feature.accountbook.dto.RecordUpdateCommand;
 import me.redshore.web_gagebu.feature.accountbook.dto.request.RecordCreateRequest;
+import me.redshore.web_gagebu.feature.accountbook.dto.request.RecordListRequest;
 import me.redshore.web_gagebu.feature.accountbook.dto.request.RecordUpdateRequest;
 import me.redshore.web_gagebu.feature.accountbook.dto.response.RecordListResponse;
 import me.redshore.web_gagebu.feature.accountbook.dto.response.RecordSummaryView;
@@ -19,6 +21,12 @@ import org.mapstruct.Mapping;
 public interface RecordMapper {
 
     @Mapping(target = ".", source = "request")
+    @Mapping(target = "accountBookId", source = "accountBookId")
+    @Mapping(target = "page", expression = "java(request.page() - 1)")
+    @Mapping(target = "sortDirection", source = "request.direction")
+    RecordListQuery toListQuery(RecordListRequest request, UUID accountBookId);
+
+    @Mapping(target = ".", source = "request")
     @Mapping(target = "userId", source = "userId")
     @Mapping(target = "accountBookId", source = "accountBookId")
     RecordCreateCommand toCreateCommand(RecordCreateRequest request, UUID userId,
@@ -26,7 +34,9 @@ public interface RecordMapper {
 
     @Mapping(target = ".", source = "request")
     @Mapping(target = "recordId", source = "recordId")
-    RecordUpdateCommand toUpdateCommand(RecordUpdateRequest request, UUID recordId);
+    @Mapping(target = "accountBookId", source = "accountBookId")
+    RecordUpdateCommand toUpdateCommand(RecordUpdateRequest request, UUID accountBookId,
+                                        UUID recordId);
 
     @Mapping(target = "userNickname", source = "user.nickname")
     @Mapping(target = "userPictureUrl", source = "user.pictureUrl")

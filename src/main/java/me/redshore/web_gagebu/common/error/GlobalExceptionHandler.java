@@ -8,7 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -34,9 +33,16 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(
         MethodArgumentNotValidException ex) {
 
-        final var message = Optional.ofNullable(ex.getBindingResult().getFieldError())
-                                    .map(FieldError::getDefaultMessage)
-                                    .orElse("Validation failed");
+        final var message =
+            Optional.ofNullable(ex.getBindingResult().getFieldError())
+                    .map(fieldError -> {
+                        final var field = fieldError.getField();
+                        final var rejectedValue = fieldError.getRejectedValue();
+                        final var defaultMessage = fieldError.getDefaultMessage();
+                        return String.format("Field '%s' with value '%s' is invalid: %s", field,
+                                             rejectedValue, defaultMessage);
+                    })
+                    .orElse("Validation failed");
 
         final var httpStatus = HttpStatus.BAD_REQUEST;
         final var errorCode = ErrorCode.ofHttpStatus(httpStatus);

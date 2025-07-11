@@ -5,6 +5,7 @@ import java.util.UUID;
 import me.redshore.web_gagebu.feature.accountbook.domain.RecordType;
 
 public record RecordUpdateCommand(
+    UUID accountBookId,
     UUID recordId,
     UUID categoryId,
     RecordType recordType,

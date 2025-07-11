@@ -13,7 +13,9 @@ import me.redshore.web_gagebu.feature.accountbook.mapping.RecordMapper;
 import me.redshore.web_gagebu.feature.accountbook.repository.AccountBookRepository;
 import me.redshore.web_gagebu.feature.accountbook.repository.CategoryRepository;
 import me.redshore.web_gagebu.feature.accountbook.repository.RecordRepository;
+import me.redshore.web_gagebu.feature.accountbook.validation.RecordValidator;
 import me.redshore.web_gagebu.feature.user.repository.UserRepository;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,9 +28,13 @@ public class RecordService {
     private final CategoryRepository categoryRepository;
     private final AccountBookRepository accountBookRepository;
     private final RecordMapper recordMapper;
+    private final RecordValidator recordValidator;
 
     @Transactional(readOnly = true)
-    public RecordDto getRecordById(UUID recordId) {
+    @PreAuthorize("hasRole('ADMIN') or @accountBookAuthorizer.canAccess(#accountBookId)")
+    public RecordDto getRecord(UUID accountBookId, UUID recordId) {
+        this.recordValidator.checkRecordContainedInAccountBook(accountBookId, recordId);
+
         return this.recordRepository
             .findById(recordId)
             .map(this.recordMapper::toDto)
@@ -38,6 +44,7 @@ public class RecordService {
     }
 
     @Transactional(readOnly = true)
+    @PreAuthorize("hasRole('ADMIN') or @accountBookAuthorizer.canAccess(#listQuery.accountBookId)")
     public RecordListResult listRecords(RecordListQuery listQuery) {
         final var categoryIds = this.categoryRepository.findIdsByAccountBookIdAndNameIn(
             listQuery.accountBookId(), listQuery.categories());
@@ -57,6 +64,7 @@ public class RecordService {
     }
 
     @Transactional
+    @PreAuthorize("hasRole('ADMIN') or @accountBookAuthorizer.canAccess(#command.accountBookId)")
     public RecordDto createRecord(RecordCreateCommand command) {
         final var user = this.userRepository
             .findById(command.userId())
@@ -84,7 +92,12 @@ public class RecordService {
     }
 
     @Transactional
+    @PreAuthorize(
+        "hasRole('ADMIN') or @recordAuthorizer.canModify(#command.accountBookId, #command.recordId)")
     public RecordDto updateRecord(RecordUpdateCommand command) {
+        this.recordValidator.checkRecordContainedInAccountBook(command.accountBookId(),
+                                                               command.recordId());
+
         final var record = this.recordRepository
             .findById(command.recordId())
             .orElseThrow(() -> new AppException(ErrorCode.NOT_FOUND,
@@ -108,7 +121,9 @@ public class RecordService {
     }
 
     @Transactional
-    public void deleteRecord(UUID recordId) {
+    @PreAuthorize("hasRole('ADMIN') or @recordAuthorizer.canModify(#accountBookId, #recordId)")
+    public void deleteRecord(UUID accountBookId, UUID recordId) {
+        this.recordValidator.checkRecordContainedInAccountBook(accountBookId, recordId);
         this.recordRepository.deleteById(recordId);
     }
 

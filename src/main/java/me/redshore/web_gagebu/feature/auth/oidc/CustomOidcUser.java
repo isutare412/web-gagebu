@@ -10,7 +10,7 @@ public class CustomOidcUser extends DefaultOidcUser {
     @Serial
     private static final long serialVersionUID = 928357192389L;
 
-    private JwtUserPayload userPayload;
+    private final JwtUserPayload userPayload;
 
     public CustomOidcUser(OidcUser oidcUser, JwtUserPayload userPayload) {
         super(oidcUser.getAuthorities(), oidcUser.getIdToken(), oidcUser.getUserInfo());

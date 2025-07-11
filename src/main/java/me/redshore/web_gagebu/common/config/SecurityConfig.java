@@ -1,4 +1,4 @@
-package me.redshore.web_gagebu.feature.auth;
+package me.redshore.web_gagebu.common.config;
 
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -24,10 +24,13 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.oauth2.server.resource.web.authentication.BearerTokenAuthenticationFilter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.logout.CookieClearingLogoutHandler;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity
+@EnableMethodSecurity(offset = 110)
+// Ensure transaction management is applied before security
+@EnableTransactionManagement(order = 100)
 @RequiredArgsConstructor
 public class SecurityConfig {
 
@@ -100,7 +103,7 @@ public class SecurityConfig {
                 .requestMatchers("/api/**").authenticated()
                 .anyRequest().permitAll());
 
-        http.addFilterAfter(jwtAutoRenewalFilter, BearerTokenAuthenticationFilter.class);
+        http.addFilterAfter(this.jwtAutoRenewalFilter, BearerTokenAuthenticationFilter.class);
 
         return http.build();
     }
@@ -112,4 +115,5 @@ public class SecurityConfig {
         regitrationBean.setEnabled(false);
         return regitrationBean;
     }
+
 }
