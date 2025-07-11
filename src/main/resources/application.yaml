@@ -21,6 +21,9 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: false
     show-sql: false
     open-in-view: false
 
@@ -58,6 +61,7 @@ app:
       renewal: 1d
 
   invitation:
+    expiration: 7d
     cleanup:
       rate: 5m
 

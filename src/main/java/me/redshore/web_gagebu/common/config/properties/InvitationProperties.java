@@ -16,6 +16,8 @@ import org.springframework.validation.annotation.Validated;
 @Getter
 public class InvitationProperties {
 
+    private Duration expiration = Duration.ofDays(7);
+
     private Cleanup cleanup = new Cleanup();
 
     @Setter

@@ -22,7 +22,7 @@ public class AccountBookAuthorizer {
     }
 
     @Transactional(readOnly = true)
-    public boolean canModify(UUID accountBookId) {
+    public boolean canManage(UUID accountBookId) {
         final var jwtUserPayload = JwtUserPayload.fromSecurityContext();
         return this.memberRepository.existsByAccountBookIdAndUserIdAndRole(accountBookId,
                                                                            jwtUserPayload.getId(),

@@ -24,7 +24,7 @@ public class UserService {
     private final UserRepository userRepository;
 
     @Transactional(readOnly = true)
-    @PreAuthorize("hasRole('ADMIN') or @userAuthorizer.canAccessUser(#id)")
+    @PreAuthorize("hasRole('ADMIN') or @userAuthorizer.canAccess(#id)")
     public UserDto getUser(UUID id) {
         return this.userRepository.findById(id)
                                   .map(this.userMapper::toDto)
@@ -45,7 +45,7 @@ public class UserService {
     }
 
     @Transactional
-    @PreAuthorize("hasRole('ADMIN') or @userAuthorizer.canModifyUser(#command.userId)")
+    @PreAuthorize("hasRole('ADMIN') or @userAuthorizer.canModify(#command.userId)")
     public UserDto updateUser(UserUpdateCommand command) {
         final var user = this.userRepository
             .findById(command.userId())

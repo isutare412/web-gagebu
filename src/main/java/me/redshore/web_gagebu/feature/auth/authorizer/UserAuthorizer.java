@@ -9,12 +9,12 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class UserAuthorizer {
 
-    public boolean canAccessUser(UUID userId) {
+    public boolean canAccess(UUID userId) {
         final var jwtUserPayload = JwtUserPayload.fromSecurityContext();
         return jwtUserPayload.getId().equals(userId);
     }
 
-    public boolean canModifyUser(UUID userId) {
+    public boolean canModify(UUID userId) {
         final var jwtUserPayload = JwtUserPayload.fromSecurityContext();
         return jwtUserPayload.getId().equals(userId);
     }

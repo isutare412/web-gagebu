@@ -75,7 +75,7 @@ public class AccountBookService {
     }
 
     @Transactional
-    @PreAuthorize("hasRole('ADMIN') or @accountBookAuthorizer.canModify(#command.accountBookId)")
+    @PreAuthorize("hasRole('ADMIN') or @accountBookAuthorizer.canManage(#command.accountBookId)")
     public AccountBookDto updateAccountBook(AccountBookUpdateCommand command) {
         return this.accountBookRepository
             .findById(command.accountBookId())
@@ -90,7 +90,7 @@ public class AccountBookService {
     }
 
     @Transactional
-    @PreAuthorize("hasRole('ADMIN') or @accountBookAuthorizer.canModify(#id)")
+    @PreAuthorize("hasRole('ADMIN') or @accountBookAuthorizer.canManage(#id)")
     public void deleteAccountBook(UUID id) {
         this.accountBookRepository.deleteById(id);
     }
