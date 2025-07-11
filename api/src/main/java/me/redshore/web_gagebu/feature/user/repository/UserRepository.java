@@ -10,6 +10,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface UserRepository extends JpaRepository<User, UUID> {
 
-    public Optional<User> findByIdpTypeAndIdpIdentifier(IdpType idpType, String idpIdentifier);
+    Optional<User> findByIdpTypeAndIdpIdentifier(IdpType idpType, String idpIdentifier);
 
 }

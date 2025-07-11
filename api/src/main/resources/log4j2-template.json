@@ -7,7 +7,7 @@
     "$resolver": "level",
     "field": "name"
   },
-  "component": "web-gagebu",
+  "component": "web-gagebu-api",
   "thread": {
     "$resolver": "thread",
     "field": "name"

@@ -1,6 +1,6 @@
 spring:
   application:
-    name: web-gagebu
+    name: web-gagebu-api
 
   profiles:
     active: default

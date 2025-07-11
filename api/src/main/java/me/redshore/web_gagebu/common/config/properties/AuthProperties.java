@@ -26,7 +26,7 @@ public class AuthProperties {
     public static class Jwt {
 
         @NotBlank
-        private String issuer = "web-gagebu";
+        private String issuer = "web-gagebu-api";
 
         @NotNull
         private Duration expiration = Duration.ofDays(7);
