@@ -73,3 +73,14 @@ app:
       - "Health"
       - "Entertainment"
       - "Shopping"
+
+  cors:
+    allowed-origins:
+      - "http://localhost:*"
+      - "https://localhost:*"
+    allowed-methods:
+      - "*"
+    allowed-headers:
+      - "*"
+    allow-credentials: true
+    path-pattern: "/**"

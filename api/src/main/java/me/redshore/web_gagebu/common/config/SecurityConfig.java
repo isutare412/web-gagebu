@@ -25,6 +25,9 @@ import org.springframework.security.oauth2.server.resource.web.authentication.Be
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.logout.CookieClearingLogoutHandler;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @Configuration
 @EnableWebSecurity
@@ -58,10 +61,13 @@ public class SecurityConfig {
 
     private final JwtAutoRenewalFilter jwtAutoRenewalFilter;
 
+    private final CorsProperties corsProperties;
+
     @Bean
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
             .csrf(AbstractHttpConfigurer::disable)
+            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .formLogin(AbstractHttpConfigurer::disable)
             .httpBasic(AbstractHttpConfigurer::disable)
             .sessionManagement(session -> session
@@ -109,11 +115,26 @@ public class SecurityConfig {
     }
 
     @Bean
-    public FilterRegistrationBean<JwtAutoRenewalFilter> disableJwtAutoRenewalFilterRegistration(
+    FilterRegistrationBean<JwtAutoRenewalFilter> disableJwtAutoRenewalFilterRegistration(
         JwtAutoRenewalFilter filter) {
         var regitrationBean = new FilterRegistrationBean<>(filter);
         regitrationBean.setEnabled(false);
         return regitrationBean;
+    }
+
+    @Bean
+    CorsConfigurationSource corsConfigurationSource() {
+        final var config = new CorsConfiguration();
+
+        config.setAllowCredentials(this.corsProperties.isAllowCredentials());
+        this.corsProperties.getAllowedOrigins().forEach(config::addAllowedOriginPattern);
+        this.corsProperties.getAllowedMethods().forEach(config::addAllowedMethod);
+        this.corsProperties.getAllowedHeaders().forEach(config::addAllowedHeader);
+
+        final var source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration(corsProperties.getPathPattern(), config);
+
+        return source;
     }
 
 }
