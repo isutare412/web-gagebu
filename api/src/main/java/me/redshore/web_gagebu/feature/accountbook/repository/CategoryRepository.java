@@ -11,8 +11,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface CategoryRepository extends JpaRepository<Category, UUID> {
 
-    @Query(
-        "SELECT c.id FROM Category c WHERE c.accountBook.id = :accountBookId AND c.name IN :names")
+    @Query("SELECT c.id FROM Category c WHERE c.accountBook.id = :accountBookId AND c.name IN :names")
     List<UUID> findIdsByAccountBookIdAndNameIn(@Param("accountBookId") UUID accountBookId,
                                                @Param("names") List<String> names);
 
