@@ -1,0 +1,930 @@
+openapi: 3.1.0
+info:
+  title: Web Gagebu API
+  version: 0.1.0
+servers:
+  - url: http://localhost:8080
+    description: Generated server url
+paths:
+  /api/v1/users/{userId}:
+    get:
+      tags:
+        - User
+      summary: Get user information by ID
+      description: Returns user information for the specified user ID.
+      operationId: getUser
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/UserView'
+        default:
+          description: Error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+        - cookieTokenAuth: []
+        - bearerTokenAuth: []
+    put:
+      tags:
+        - User
+      summary: Update user data
+      operationId: updateUser
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserUpdateRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/UserView'
+        default:
+          description: Error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+        - cookieTokenAuth: []
+        - bearerTokenAuth: []
+  /api/v1/account-books/{accountBookId}:
+    get:
+      tags:
+        - AccountBook
+      summary: Get account book by ID
+      operationId: getAccountBook
+      parameters:
+        - name: accountBookId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AccountBookView'
+        default:
+          description: Error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+        - cookieTokenAuth: []
+        - bearerTokenAuth: []
+    put:
+      tags:
+        - AccountBook
+      summary: Update account book by ID
+      operationId: updateAccountBook
+      parameters:
+        - name: accountBookId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AccountBookUpdateRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AccountBookView'
+        default:
+          description: Error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+        - cookieTokenAuth: []
+        - bearerTokenAuth: []
+    delete:
+      tags:
+        - AccountBook
+      summary: Delete account book by ID
+      operationId: deleteAccountBook
+      parameters:
+        - name: accountBookId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: OK
+        default:
+          description: Error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+        - cookieTokenAuth: []
+        - bearerTokenAuth: []
+  /api/v1/account-books/{accountBookId}/records/{recordId}:
+    get:
+      tags:
+        - Record
+      summary: Get record by ID
+      operationId: getRecord
+      parameters:
+        - name: accountBookId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: recordId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/RecordView'
+        default:
+          description: Error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+        - cookieTokenAuth: []
+        - bearerTokenAuth: []
+    put:
+      tags:
+        - Record
+      summary: Update an existing record
+      operationId: updateRecord
+      parameters:
+        - name: accountBookId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: recordId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RecordUpdateRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/RecordView'
+        default:
+          description: Error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+        - cookieTokenAuth: []
+        - bearerTokenAuth: []
+    delete:
+      tags:
+        - Record
+      summary: Delete a record by ID
+      operationId: deleteRecord
+      parameters:
+        - name: accountBookId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: recordId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: OK
+        default:
+          description: Error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+        - cookieTokenAuth: []
+        - bearerTokenAuth: []
+  /api/v1/invitations/{invitationId}/join:
+    post:
+      tags:
+        - Invitation
+      summary: Join an account book using an invitation
+      operationId: joinInvitation
+      parameters:
+        - name: invitationId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: OK
+        default:
+          description: Error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+        - cookieTokenAuth: []
+        - bearerTokenAuth: []
+  /api/v1/account-books:
+    get:
+      tags:
+        - AccountBook
+      summary: List account books of user
+      operationId: listAccountBooks
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AccountBookListResponse'
+        default:
+          description: Error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+        - cookieTokenAuth: []
+        - bearerTokenAuth: []
+    post:
+      tags:
+        - AccountBook
+      summary: Create account book
+      operationId: createAccountBook
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AccountBookCreateRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/AccountBookView'
+        default:
+          description: Error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+        - cookieTokenAuth: []
+        - bearerTokenAuth: []
+  /api/v1/account-books/{accountBookId}/records:
+    get:
+      tags:
+        - Record
+      summary: List records of account book
+      operationId: listRecords
+      parameters:
+        - name: accountBookId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: page
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int32
+            example: 1
+            exclusiveMinimum: 0
+          example: 1
+        - name: pageSize
+          in: query
+          required: true
+          schema:
+            type: integer
+            format: int32
+            example: 20
+            exclusiveMinimum: 0
+          example: 20
+        - name: categories
+          in: query
+          required: false
+          schema:
+            type: array
+            items:
+              type: string
+        - name: recordType
+          in: query
+          required: false
+          schema:
+            type: string
+            enum:
+              - INCOME
+              - EXPENSE
+        - name: startDate
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date
+        - name: endDate
+          in: query
+          required: false
+          schema:
+            type: string
+            format: date
+        - name: direction
+          in: query
+          required: true
+          schema:
+            type: string
+            enum:
+              - ASCENDING
+              - DESCENDING
+            example: DESCENDING
+          example: DESCENDING
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/RecordListResponse'
+        default:
+          description: Error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+        - cookieTokenAuth: []
+        - bearerTokenAuth: []
+    post:
+      tags:
+        - Record
+      summary: Create a new record
+      operationId: createRecord
+      parameters:
+        - name: accountBookId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RecordCreateRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/RecordView'
+        default:
+          description: Error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+        - cookieTokenAuth: []
+        - bearerTokenAuth: []
+  /api/v1/account-books/{accountBookId}/invitations:
+    get:
+      tags:
+        - AccountBook
+        - Invitation
+      summary: List current valid invitations for an account book
+      operationId: listInvitations
+      parameters:
+        - name: accountBookId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/InvitationListResponose'
+        default:
+          description: Error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+        - cookieTokenAuth: []
+        - bearerTokenAuth: []
+    post:
+      tags:
+        - AccountBook
+        - Invitation
+      summary: Create an invitation for an account book
+      operationId: createInvitation
+      parameters:
+        - name: accountBookId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/InvitationView'
+        default:
+          description: Error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+        - cookieTokenAuth: []
+        - bearerTokenAuth: []
+  /api/v1/users/me:
+    get:
+      tags:
+        - User
+      summary: Get current logged-in user information
+      description: The user field is null if the user is not authenticated.
+      operationId: getCurrentUser
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/GetCurrentUserResponse'
+        default:
+          description: Error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+        - cookieTokenAuth: []
+        - bearerTokenAuth: []
+  /api/v1/oauth2/authorization/google:
+    get:
+      tags:
+        - Authentication
+      summary: Start Google OAuth2 authorization flow
+      operationId: redirectToIdp
+      responses:
+        '200':
+          description: OK
+        default:
+          description: Error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api/v1/logout:
+    get:
+      tags:
+        - Authentication
+      summary: Logout from the application
+      operationId: logout
+      responses:
+        '200':
+          description: OK
+        default:
+          description: Error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+components:
+  schemas:
+    UserUpdateRequest:
+      type: object
+      properties:
+        nickname:
+          type: string
+          example: Bob
+    UserView:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        roles:
+          type: array
+          items:
+            type: string
+            enum:
+              - USER
+              - ADMIN
+        nickname:
+          type: string
+          example: Bob
+        idpType:
+          type: string
+          enum:
+            - GOOGLE
+            - KAKAO
+            - NAVER
+        idpIdentifier:
+          type: string
+          example: 19817852398
+        pictureUrl:
+          type: string
+          example: https://example.com/amazing-thumbnail
+        email:
+          type: string
+          example: user@example.com
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    AccountBookUpdateRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          example: My Second Account Book
+    AccountBookView:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+          example: My Account Book
+        members:
+          type: array
+          items:
+            $ref: '#/components/schemas/MemberView'
+        categories:
+          type: array
+          items:
+            $ref: '#/components/schemas/CategoryView'
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    CategoryView:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+          example: Hobby
+        isBasic:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    MemberView:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        userId:
+          type: string
+          format: uuid
+        role:
+          type: string
+          enum:
+            - OWNER
+            - PARTICIPANT
+        nickname:
+          type: string
+          example: Marilly
+        pictureUrl:
+          type: string
+          example: https://example.com/pic.png
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    RecordUpdateRequest:
+      type: object
+      properties:
+        categoryId:
+          type: string
+          format: uuid
+        recordType:
+          type: string
+          enum:
+            - INCOME
+            - EXPENSE
+        amount:
+          type: integer
+          format: int64
+          example: 4000
+        summary:
+          type: string
+          example: Five Guys
+        description:
+          type: string
+          example: Hang out with Alice and Bob
+        date:
+          type: string
+          format: date
+      required:
+        - categoryId
+        - date
+        - recordType
+    RecordView:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        userNickname:
+          type: string
+          example: Bob
+        userPictureUrl:
+          type: string
+          example: https://example.com/thumbnail.png
+        category:
+          type: string
+        recordType:
+          type: string
+          enum:
+            - INCOME
+            - EXPENSE
+        amount:
+          type: integer
+          format: int64
+          example: 4000
+        summary:
+          type: string
+          example: Five Guys
+        description:
+          type: string
+          example: Hang out with Alice and Bob
+        date:
+          type: string
+          format: date
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    AccountBookCreateRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          example: My First Account Book
+    RecordCreateRequest:
+      type: object
+      properties:
+        categoryId:
+          type: string
+          format: uuid
+        recordType:
+          type: string
+          enum:
+            - INCOME
+            - EXPENSE
+        amount:
+          type: integer
+          format: int64
+          example: 4000
+        summary:
+          type: string
+          example: Five Guys
+        description:
+          type: string
+          example: Hang out with Alice and Bob
+        date:
+          type: string
+          format: date
+      required:
+        - categoryId
+        - date
+        - recordType
+    InvitationView:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        expiration:
+          type: string
+          format: date-time
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    GetCurrentUserResponse:
+      type: object
+      properties:
+        user:
+          $ref: '#/components/schemas/UserView'
+    AccountBookListResponse:
+      type: object
+      properties:
+        accountBooks:
+          type: array
+          items:
+            $ref: '#/components/schemas/AccountBookSummaryView'
+    AccountBookSummaryView:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+          example: My Account Book
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    RecordListResponse:
+      type: object
+      properties:
+        records:
+          type: array
+          items:
+            $ref: '#/components/schemas/RecordSummaryView'
+        page:
+          type: integer
+          format: int32
+        pageSize:
+          type: integer
+          format: int32
+        totalPages:
+          type: integer
+          format: int32
+        totalElements:
+          type: integer
+          format: int64
+    RecordSummaryView:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        userNickname:
+          type: string
+          example: Bob
+        userPictureUrl:
+          type: string
+          example: https://example.com/thumbnail.png
+        category:
+          type: string
+          example: Foods
+        recordType:
+          type: string
+          enum:
+            - INCOME
+            - EXPENSE
+        amount:
+          type: integer
+          format: int64
+          example: 4000
+        summary:
+          type: string
+          example: Five Guys
+        date:
+          type: string
+          format: date
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    InvitationListResponose:
+      type: object
+      properties:
+        invitations:
+          type: array
+          items:
+            $ref: '#/components/schemas/InvitationView'
+    ErrorResponse:
+      description: Common error response structure
+      properties:
+        status:
+          type: integer
+          format: int32
+          example: 404
+        statusText:
+          type: string
+          example: Not Found
+        errorCode:
+          type: string
+          description: Detailed error codes for the application
+          enum:
+            - BAD_REQUEST
+            - UNEXPECTED_IDP
+            - UNAUTHORIZED
+            - FORBIDDEN
+            - NOT_FOUND
+            - METHOD_NOT_ALLOWED
+            - CONFLICT
+            - UNPROCESSABLE_ENTITY
+            - INTERNAL_SERVER_ERROR
+            - NOT_IMPLEMENTED
+            - SERVICE_UNAVAILABLE
+          example: DETAILED_ERROR_CODE
+        message:
+          type: string
+          example: Something went wrong
+        requestId:
+          type: string
+          example: 123e4567-e89b-12d3-a456-426614174000
+  securitySchemes:
+    bearerTokenAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    cookieTokenAuth:
+      type: apiKey
+      name: TOKEN
+      in: cookie

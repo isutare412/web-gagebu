@@ -1,2 +1,169 @@
-<h1>Welcome to SvelteKit</h1>
-<p>Visit <a href="https://svelte.dev/docs/kit">svelte.dev/docs/kit</a> to read the documentation</p>
+<script lang="ts">
+  import { api } from '$lib/api/client';
+  import type { components } from '$lib/api/schema';
+  import Loading from '$lib/components/Loading.svelte';
+  import { showApiErrorToast, showSuccessToast } from '$lib/stores/toast.svelte';
+  import { isAuthenticated, userState } from '$lib/stores/user.svelte';
+  import { formatDateISO } from '$lib/utils/date';
+
+  type AccountBookSummary = components['schemas']['AccountBookSummaryView'];
+
+  let accountBooks: AccountBookSummary[] = $state([]);
+  let loading = $state(true);
+  let showCreateForm = $state(false);
+  let newAccountBookName = $state('');
+  let creating = $state(false);
+
+  async function loadAccountBooks() {
+    if (!isAuthenticated()) return;
+
+    try {
+      loading = true;
+      const response = await api.listAccountBooks();
+
+      if (response.error) {
+        showApiErrorToast(response.error, 'Failed to load account books');
+        return;
+      }
+
+      if (response.data?.accountBooks) {
+        accountBooks = response.data.accountBooks;
+      }
+    } catch (err) {
+      showApiErrorToast(err, 'Failed to load account books');
+    } finally {
+      loading = false;
+    }
+  }
+
+  async function createAccountBook() {
+    if (!newAccountBookName.trim()) return;
+
+    try {
+      creating = true;
+      const response = await api.createAccountBook({ name: newAccountBookName });
+
+      if (response.error) {
+        showApiErrorToast(response.error, 'Failed to create account book');
+        return;
+      }
+
+      showSuccessToast('Account book created successfully');
+      newAccountBookName = '';
+      showCreateForm = false;
+      await loadAccountBooks();
+    } catch (err) {
+      showApiErrorToast(err, 'Failed to create account book');
+    } finally {
+      creating = false;
+    }
+  }
+
+  $effect(() => {
+    if (isAuthenticated() && !userState.isLoading) {
+      loadAccountBooks();
+    }
+  });
+</script>
+
+<div class="mx-auto max-w-4xl">
+  <div class="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+    <h1 class="text-3xl font-bold">My Account Books</h1>
+    {#if isAuthenticated()}
+      <button class="btn btn-primary" onclick={() => (showCreateForm = true)}>
+        + New Account Book
+      </button>
+    {/if}
+  </div>
+
+  {#if !isAuthenticated() && !userState.isLoading}
+    <div class="hero bg-base-100 rounded-box min-h-96">
+      <div class="hero-content text-center">
+        <div class="max-w-md">
+          <h1 class="text-5xl font-bold">Welcome to GageBu!</h1>
+          <p class="py-6">
+            Manage your finances with ease. Track expenses, create budgets, and collaborate with
+            others.
+          </p>
+          <a href="/api/v1/oauth2/authorization/google" class="btn btn-primary">
+            Get Started with Google
+          </a>
+        </div>
+      </div>
+    </div>
+  {:else if loading}
+    <Loading size="lg" message="Loading account books..." />
+  {:else}
+    <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+      {#each accountBooks as accountBook}
+        <div class="card bg-base-100 shadow-xl transition-shadow hover:shadow-2xl">
+          <div class="card-body">
+            <h2 class="card-title">{accountBook.name}</h2>
+            <p class="text-base-content/70 text-sm">
+              Created: {formatDateISO(accountBook.createdAt || '')}
+            </p>
+            <div class="card-actions justify-end">
+              <a href="/account-books/{accountBook.id}" class="btn btn-primary"> Open </a>
+            </div>
+          </div>
+        </div>
+      {/each}
+
+      {#if accountBooks.length === 0}
+        <div class="col-span-full py-12 text-center">
+          <div class="mb-4 text-6xl">📖</div>
+          <h3 class="mb-2 text-xl font-semibold">No account books yet</h3>
+          <p class="text-base-content/70 mb-4">Create your first account book to get started!</p>
+          <button class="btn btn-primary" onclick={() => (showCreateForm = true)}>
+            Create Account Book
+          </button>
+        </div>
+      {/if}
+    </div>
+  {/if}
+</div>
+
+<!-- Create Account Book Modal -->
+{#if showCreateForm}
+  <div class="modal modal-open">
+    <div class="modal-box">
+      <h3 class="text-lg font-bold">Create New Account Book</h3>
+      <div class="py-4">
+        <div class="form-control w-full">
+          <label class="label" for="account-book-name">
+            <span class="label-text">Account Book Name</span>
+          </label>
+          <input
+            id="account-book-name"
+            type="text"
+            placeholder="My Account Book"
+            class="input input-bordered w-full"
+            bind:value={newAccountBookName}
+            onkeydown={(e) => e.key === 'Enter' && createAccountBook()}
+          />
+        </div>
+      </div>
+      <div class="modal-action">
+        <button
+          class="btn"
+          onclick={() => {
+            showCreateForm = false;
+            newAccountBookName = '';
+          }}
+        >
+          Cancel
+        </button>
+        <button
+          class="btn btn-primary"
+          onclick={createAccountBook}
+          disabled={creating || !newAccountBookName.trim()}
+        >
+          {#if creating}
+            <Loading size="sm" />
+          {/if}
+          Create
+        </button>
+      </div>
+    </div>
+  </div>
+{/if}
