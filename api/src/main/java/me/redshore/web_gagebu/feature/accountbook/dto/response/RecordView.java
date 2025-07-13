@@ -9,6 +9,8 @@ import me.redshore.web_gagebu.feature.accountbook.domain.RecordType;
 public record RecordView(
     UUID id,
 
+    UUID userId,
+
     @Schema(example = "Bob")
     String userNickname,
 

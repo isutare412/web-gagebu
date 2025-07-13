@@ -7,7 +7,7 @@
   import Loading from '$lib/components/Loading.svelte';
   import RecordForm from '$lib/components/RecordForm.svelte';
   import { showApiErrorToast, showSuccessToast } from '$lib/stores/toast.svelte';
-  import { isAuthenticated } from '$lib/stores/user.svelte';
+  import { isAuthenticated, userState } from '$lib/stores/user.svelte';
   import { formatDateTimeISO, formatDateWithDay } from '$lib/utils/date';
   import { onMount } from 'svelte';
 
@@ -89,6 +89,27 @@
   function getCategoryIdByName(categoryName: string): string | null {
     return accountBook?.categories?.find((cat) => cat.name === categoryName)?.id || null;
   }
+
+  // Check if current user can edit this record
+  let canEditRecord = $derived.by(() => {
+    if (!record || !accountBook || !userState.user) return false;
+
+    // Find current user's role in this account book
+    const currentMember = accountBook.members?.find(
+      (member) => member.userId === userState.user?.id
+    );
+    if (!currentMember) return false;
+
+    // Owners can edit any record
+    if (currentMember.role === 'OWNER') return true;
+
+    // Participants can only edit their own records
+    if (currentMember.role === 'PARTICIPANT') {
+      return record.userId === userState.user.id;
+    }
+
+    return false;
+  });
 
   async function updateRecord() {
     if (!accountBookId || !recordId) return;
@@ -212,13 +233,15 @@
       </div>
 
       <div class="flex gap-2">
-        <button class="btn btn-outline" onclick={startEdit}> ✏️ Edit </button>
-        <button class="btn btn-error" onclick={showDeleteConfirmation} disabled={deleting}>
-          {#if deleting}
-            <Loading size="sm" />
-          {/if}
-          🗑️ Delete
-        </button>
+        {#if canEditRecord}
+          <button class="btn btn-outline" onclick={startEdit}> ✏️ Edit </button>
+          <button class="btn btn-error" onclick={showDeleteConfirmation} disabled={deleting}>
+            {#if deleting}
+              <Loading size="sm" />
+            {/if}
+            🗑️ Delete
+          </button>
+        {/if}
       </div>
     </div>
 

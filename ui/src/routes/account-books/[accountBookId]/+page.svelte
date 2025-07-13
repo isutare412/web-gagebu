@@ -6,7 +6,7 @@
   import ConfirmModal from '$lib/components/ConfirmModal.svelte';
   import Loading from '$lib/components/Loading.svelte';
   import { showApiErrorToast, showSuccessToast } from '$lib/stores/toast.svelte';
-  import { isAuthenticated } from '$lib/stores/user.svelte';
+  import { isAuthenticated, userState } from '$lib/stores/user.svelte';
   import { formatDateISO, formatDateTimeISO } from '$lib/utils/date';
   import { onMount, tick } from 'svelte';
 
@@ -24,20 +24,18 @@
 
   // Pagination - reactive to URL changes
   let currentPage = $derived(parseInt(page.url.searchParams.get('p') || '1'));
-  let pageSize = $derived(
-    (() => {
-      const urlPageSize = page.url.searchParams.get('ps');
-      const localPageSize = localStorage.getItem('pageSize');
-      const finalPageSize = urlPageSize || localPageSize || '20';
+  let pageSize = $derived.by(() => {
+    const urlPageSize = page.url.searchParams.get('ps');
+    const localPageSize = localStorage.getItem('pageSize');
+    const finalPageSize = urlPageSize || localPageSize || '20';
 
-      // Keep localStorage in sync with URL or default
-      if (urlPageSize && typeof window !== 'undefined') {
-        localStorage.setItem('pageSize', urlPageSize);
-      }
+    // Keep localStorage in sync with URL or default
+    if (urlPageSize && typeof window !== 'undefined') {
+      localStorage.setItem('pageSize', urlPageSize);
+    }
 
-      return parseInt(finalPageSize);
-    })()
-  );
+    return parseInt(finalPageSize);
+  });
 
   // For the select binding - synced with the derived pageSize
   let pageSizeSelect = $derived(pageSize);
@@ -46,12 +44,10 @@
 
   // Filters - reactive to URL changes
   let selectedCategory = $derived(page.url.searchParams.get('c') || undefined);
-  let recordType = $derived(
-    (() => {
-      const type = page.url.searchParams.get('rt');
-      return type === 'INCOME' || type === 'EXPENSE' ? (type as 'INCOME' | 'EXPENSE') : undefined;
-    })()
-  );
+  let recordType = $derived.by(() => {
+    const type = page.url.searchParams.get('rt');
+    return type === 'INCOME' || type === 'EXPENSE' ? (type as 'INCOME' | 'EXPENSE') : undefined;
+  });
   let startDate = $derived(page.url.searchParams.get('sd') || '');
   let endDate = $derived(page.url.searchParams.get('ed') || '');
   let sortDirection: 'ASCENDING' | 'DESCENDING' = $state('DESCENDING');
@@ -72,6 +68,13 @@
   let showFilters = $state(false);
   let initialLoad = $state(true);
   let loadRecordsTimeout: number | null = null;
+
+  // Check if current user is owner of the account book
+  let isOwner = $derived.by(() => {
+    if (!accountBook || !userState.user) return false;
+    const currentMember = accountBook.members?.find(member => member.userId === userState.user?.id);
+    return currentMember?.role === 'OWNER';
+  });
 
   async function loadAccountBook() {
     if (!accountBookId) return;
@@ -129,7 +132,7 @@
   }
 
   async function loadInvitations() {
-    if (!accountBookId) return;
+    if (!accountBookId || !isOwner) return;
 
     try {
       const response = await api.listInvitations(accountBookId);
@@ -148,7 +151,7 @@
   }
 
   async function createInvitation() {
-    if (!accountBookId) return;
+    if (!accountBookId || !isOwner) return;
 
     try {
       const response = await api.createInvitation(accountBookId);
@@ -166,7 +169,7 @@
   }
 
   async function updateAccountBook() {
-    if (!accountBookId || !editedName.trim()) return;
+    if (!accountBookId || !editedName.trim() || !isOwner) return;
 
     try {
       saving = true;
@@ -188,7 +191,7 @@
   }
 
   async function deleteAccountBook() {
-    if (!accountBookId) return;
+    if (!accountBookId || !isOwner) return;
 
     try {
       deleting = true;
@@ -366,7 +369,6 @@
     }
 
     loadAccountBook();
-    loadInvitations();
 
     // Allow effects to run after initial setup - this will trigger the main effect
     setTimeout(() => {
@@ -417,6 +419,13 @@
   // Keep pageSizeSelect in sync with derived pageSize
   $effect(() => {
     pageSizeSelect = pageSize;
+  });
+
+  // Load invitations when account book is loaded and user is owner
+  $effect(() => {
+    if (accountBook && isOwner) {
+      loadInvitations();
+    }
   });
 
   // Keyboard navigation for pagination
@@ -503,10 +512,16 @@
             tabindex="0"
             class="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow"
           >
-            <li><button onclick={() => (showEditModal = true)}>Edit Name</button></li>
+            {#if isOwner}
+              <li><button onclick={() => (showEditModal = true)}>Edit Name</button></li>
+            {/if}
             <li><a href="/account-books/{accountBookId}/members">View Members</a></li>
-            <li><button onclick={() => (showInviteModal = true)}>Manage Invitations</button></li>
-            <li><button onclick={deleteAccountBook} class="text-error">Delete</button></li>
+            {#if isOwner}
+              <li><button onclick={() => (showInviteModal = true)}>Manage Invitations</button></li>
+            {/if}
+            {#if isOwner}
+              <li><button onclick={deleteAccountBook} class="text-error">Delete</button></li>
+            {/if}
           </ul>
         </div>
       </div>
@@ -886,7 +901,7 @@
 {/if}
 
 <!-- Invite Modal -->
-{#if showInviteModal}
+{#if showInviteModal && isOwner}
   <div class="modal modal-open">
     <div class="modal-box">
       <h3 class="text-lg font-bold">Manage Invitations</h3>

@@ -38,11 +38,13 @@ public interface RecordMapper {
     RecordUpdateCommand toUpdateCommand(RecordUpdateRequest request, UUID accountBookId,
                                         UUID recordId);
 
+    @Mapping(target = "userId", source = "user.id")
     @Mapping(target = "userNickname", source = "user.nickname")
     @Mapping(target = "userPictureUrl", source = "user.pictureUrl")
     @Mapping(target = "category", source = "category.name")
     RecordDto toDto(Record record);
 
+    @Mapping(target = "userId", source = "user.id")
     @Mapping(target = "userNickname", source = "user.nickname")
     @Mapping(target = "userPictureUrl", source = "user.pictureUrl")
     @Mapping(target = "category", source = "category.name")

@@ -717,6 +717,9 @@ components:
         id:
           type: string
           format: uuid
+        userId:
+          type: string
+          format: uuid
         userNickname:
           type: string
           example: Bob
@@ -848,6 +851,9 @@ components:
       type: object
       properties:
         id:
+          type: string
+          format: uuid
+        userId:
           type: string
           format: uuid
         userNickname:

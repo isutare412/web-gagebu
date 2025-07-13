@@ -8,6 +8,7 @@ import me.redshore.web_gagebu.feature.accountbook.domain.RecordType;
 
 public record RecordSummaryView(
     UUID id,
+    UUID userId,
     @Schema(example = "Bob") String userNickname,
     @Schema(example = "https://example.com/thumbnail.png") String userPictureUrl,
     @Schema(example = "Foods") String category,

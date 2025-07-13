@@ -278,6 +278,8 @@ export interface components {
     RecordView: {
       /** Format: uuid */
       id?: string;
+      /** Format: uuid */
+      userId?: string;
       /** @example Bob */
       userNickname?: string;
       /** @example https://example.com/thumbnail.png */
@@ -362,6 +364,8 @@ export interface components {
     RecordSummaryView: {
       /** Format: uuid */
       id?: string;
+      /** Format: uuid */
+      userId?: string;
       /** @example Bob */
       userNickname?: string;
       /** @example https://example.com/thumbnail.png */

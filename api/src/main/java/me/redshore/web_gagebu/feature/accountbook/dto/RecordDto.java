@@ -7,6 +7,7 @@ import me.redshore.web_gagebu.feature.accountbook.domain.RecordType;
 
 public record RecordDto(
     UUID id,
+    UUID userId,
     String userNickname,
     String userPictureUrl,
     String category,

@@ -37,6 +37,10 @@ Web-Gagebu is a full-stack account book application with:
     - Correct: `<button onclick={handleClick}>Click me</button>`
     - Incorrect: `<button on:click={handleClick}>Click me</button>`
     - Mixing syntaxes will cause compilation errors
+  - **Reactive State**: Use `$derived.by()` for complex derived values that require function bodies
+    - Simple: `let count = $derived(items.length)`
+    - Complex: `let isValid = $derived.by(() => { /* complex logic */ return result; })`
+    - Note: `$derived.by()` returns the computed value directly, not a function
   - **Reactive Timing**: Use `tick()` to handle multiple rapid state changes in `$effect`
     - Import: `import { tick } from 'svelte'`
     - Use with flag pattern to prevent duplicate API calls:
