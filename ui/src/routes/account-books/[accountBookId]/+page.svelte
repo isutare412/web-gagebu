@@ -72,7 +72,9 @@
   // Check if current user is owner of the account book
   let isOwner = $derived.by(() => {
     if (!accountBook || !userState.user) return false;
-    const currentMember = accountBook.members?.find(member => member.userId === userState.user?.id);
+    const currentMember = accountBook.members?.find(
+      (member) => member.userId === userState.user?.id
+    );
     return currentMember?.role === 'OWNER';
   });
 
@@ -635,7 +637,25 @@
     <!-- Records -->
     <div class="card bg-base-100 shadow-lg">
       <div class="card-body">
-        <h2 class="card-title">Records</h2>
+        <div class="flex items-center justify-between">
+          <h2 class="card-title">Records</h2>
+          <button
+            class="btn btn-ghost btn-circle btn-sm"
+            onclick={loadRecords}
+            disabled={recordsLoading}
+            title="Refresh records"
+            aria-label="Refresh records"
+          >
+            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+              />
+            </svg>
+          </button>
+        </div>
 
         {#if recordsLoading}
           <Loading size="lg" message="Loading records..." />
@@ -809,7 +829,7 @@
                 <div class="flex items-center gap-1">
                   <input
                     type="number"
-                    class="input input-bordered w-10 [appearance:textfield] py-0 text-center text-sm [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                    class="input input-bordered w-10 py-0 text-center text-sm [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
                     min="1"
                     max={totalPages}
                     value={currentPage}
