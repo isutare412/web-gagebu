@@ -831,7 +831,7 @@
                 <div class="flex items-center gap-1">
                   <input
                     type="number"
-                    class="input input-bordered w-10 py-0 text-center text-sm [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                    class="input input-bordered w-10 [appearance:textfield] py-0 text-center text-sm [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
                     min="1"
                     max={totalPages}
                     value={currentPage}

@@ -131,11 +131,16 @@
     <fieldset class="fieldset">
       <legend class="fieldset-legend">Amount *</legend>
       <div class="relative">
-        <span class="absolute left-3 top-1/2 -translate-y-1/2 text-base-content/70 pointer-events-none z-10">₩</span>
+        <span
+          class="text-base-content/70 pointer-events-none absolute top-1/2 left-3 z-10 -translate-y-1/2"
+          >₩</span
+        >
         <input
           id="amount"
           type="text"
-          class="input input-bordered w-full pl-8 [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none {amountError ? 'input-error' : ''}"
+          class="input input-bordered w-full [appearance:textfield] pl-8 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none {amountError
+            ? 'input-error'
+            : ''}"
           bind:value={formData.amount}
           oninput={handleAmountInput}
           placeholder="0"
@@ -234,9 +239,7 @@
 
   <!-- Actions -->
   <div class="flex gap-4 pt-4">
-    <button type="button" class="btn {isModal ? '' : 'flex-1'}" onclick={onCancel}>
-      Cancel
-    </button>
+    <button type="button" class="btn {isModal ? '' : 'flex-1'}" onclick={onCancel}> Cancel </button>
     <button
       type="submit"
       class="btn btn-primary {isModal ? '' : 'flex-1'}"

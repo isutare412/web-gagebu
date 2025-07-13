@@ -13,6 +13,7 @@
   let showCreateForm = $state(false);
   let newAccountBookName = $state('');
   let creating = $state(false);
+  let nameError = $state('');
 
   async function loadAccountBooks() {
     if (!isAuthenticated()) return;
@@ -36,8 +37,28 @@
     }
   }
 
+  function validateAccountBookName(name: string): string {
+    if (name.length > 64) {
+      return 'Account book name must not exceed 64 characters';
+    }
+    return '';
+  }
+
+  function handleNameInput(e: Event) {
+    const target = e.target as HTMLInputElement;
+    newAccountBookName = target.value;
+    nameError = validateAccountBookName(newAccountBookName);
+  }
+
   async function createAccountBook() {
     if (!newAccountBookName.trim()) return;
+
+    // Validate name length before creating
+    const error = validateAccountBookName(newAccountBookName);
+    if (error) {
+      nameError = error;
+      return;
+    }
 
     try {
       creating = true;
@@ -50,6 +71,7 @@
 
       showSuccessToast('Account book created successfully');
       newAccountBookName = '';
+      nameError = '';
       showCreateForm = false;
       await loadAccountBooks();
     } catch (err) {
@@ -137,10 +159,16 @@
             id="account-book-name"
             type="text"
             placeholder="My Account Book"
-            class="input input-bordered w-full"
+            class="input input-bordered w-full {nameError ? 'input-error' : ''}"
             bind:value={newAccountBookName}
-            onkeydown={(e) => e.key === 'Enter' && createAccountBook()}
+            oninput={handleNameInput}
+            onkeydown={(e) => e.key === 'Enter' && !nameError && createAccountBook()}
           />
+          {#if nameError}
+            <div class="label">
+              <span class="label-text-alt text-error">{nameError}</span>
+            </div>
+          {/if}
         </div>
       </div>
       <div class="modal-action">
@@ -149,6 +177,7 @@
           onclick={() => {
             showCreateForm = false;
             newAccountBookName = '';
+            nameError = '';
           }}
         >
           Cancel
@@ -156,7 +185,7 @@
         <button
           class="btn btn-primary"
           onclick={createAccountBook}
-          disabled={creating || !newAccountBookName.trim()}
+          disabled={creating || !newAccountBookName.trim() || nameError !== ''}
         >
           {#if creating}
             <Loading size="sm" />
