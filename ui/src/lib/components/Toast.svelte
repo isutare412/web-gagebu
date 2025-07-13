@@ -8,10 +8,12 @@
   let { toast, onDismiss } = $props<{ toast: Toast; onDismiss?: (id: string) => void }>();
 
   // Create initial Tween instance for smooth progress animation
-  let progress = new Tween(100, {
-    duration: toast.duration,
-    easing: linear,
-  });
+  let progress = $state(
+    new Tween(100, {
+      duration: toast.duration,
+      easing: linear,
+    })
+  );
 
   let timeoutId: number | null = null;
   let startTime: number = Date.now();
@@ -34,7 +36,7 @@
 
   onMount(() => {
     startTime = Date.now();
-    
+
     // Start the animation from 100% to 0%
     progress.set(0);
 
@@ -65,21 +67,21 @@
       const pauseDuration = Date.now() - pausedAt;
       totalPausedTime += pauseDuration;
       pausedAt = null;
-      
+
       // Calculate remaining time
       const elapsed = Date.now() - startTime - totalPausedTime;
       const remainingTime = Math.max(0, toast.duration - elapsed);
-      
+
       if (remainingTime > 0) {
         // Create a new Tween instance for the remaining duration
         progress = new Tween(progress.current, {
           duration: remainingTime,
           easing: linear,
         });
-        
+
         // Resume animation from current position to 0
         progress.set(0);
-        
+
         // Set new timeout for remaining time
         timeoutId = setTimeout(() => {
           dismissToast();
@@ -132,7 +134,7 @@
 <div
   class="alert {getAlertClass(
     toast.type
-  )} relative w-full transform overflow-hidden shadow-lg transition-all duration-300 ease-in-out md:w-fit md:min-w-64 md:max-w-4xl"
+  )} relative w-full transform overflow-hidden shadow-lg transition-all duration-300 ease-in-out md:w-fit md:max-w-4xl md:min-w-64"
   role="alert"
   onmouseenter={handleMouseEnter}
   onmouseleave={handleMouseLeave}

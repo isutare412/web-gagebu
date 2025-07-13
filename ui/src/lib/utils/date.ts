@@ -5,10 +5,10 @@
  */
 export function formatDateISO(date: string | Date): string {
   if (!date) return '';
-  
+
   const dateObj = typeof date === 'string' ? new Date(date) : date;
   if (isNaN(dateObj.getTime())) return '';
-  
+
   return dateObj.toISOString().split('T')[0]!;
 }
 
@@ -19,11 +19,14 @@ export function formatDateISO(date: string | Date): string {
  */
 export function formatDateTimeISO(date: string | Date): string {
   if (!date) return '';
-  
+
   const dateObj = typeof date === 'string' ? new Date(date) : date;
   if (isNaN(dateObj.getTime())) return '';
-  
-  return dateObj.toISOString().replace('T', ' ').replace(/\.\d{3}Z$/, '');
+
+  return dateObj
+    .toISOString()
+    .replace('T', ' ')
+    .replace(/\.\d{3}Z$/, '');
 }
 
 /**
@@ -33,12 +36,12 @@ export function formatDateTimeISO(date: string | Date): string {
  */
 export function formatDateWithDay(date: string | Date): string {
   if (!date) return '';
-  
+
   const dateObj = typeof date === 'string' ? new Date(date) : date;
   if (isNaN(dateObj.getTime())) return '';
-  
+
   const isoDate = dateObj.toISOString().split('T')[0]!;
   const dayName = dateObj.toLocaleDateString('en-US', { weekday: 'long' });
-  
+
   return `${isoDate} ${dayName}`;
 }

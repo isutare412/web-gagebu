@@ -149,7 +149,7 @@
                 <span class="label-text font-semibold">Roles</span>
               </div>
               <div class="flex gap-2">
-                {#each userState.user.roles as role}
+                {#each userState.user.roles as role (role)}
                   <div class="badge badge-primary">{role}</div>
                 {/each}
               </div>

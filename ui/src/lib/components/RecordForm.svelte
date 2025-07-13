@@ -117,7 +117,7 @@
         required
       >
         <option value="">Select a category</option>
-        {#each accountBook.categories || [] as category}
+        {#each accountBook.categories || [] as category (category.id)}
           <option value={category.id}>
             {category.name}
           </option>

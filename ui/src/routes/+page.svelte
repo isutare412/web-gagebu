@@ -95,7 +95,7 @@
     <Loading size="lg" message="Loading account books..." />
   {:else}
     <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-      {#each accountBooks as accountBook}
+      {#each accountBooks as accountBook (accountBook.id)}
         <div class="card bg-base-100 shadow-xl transition-shadow hover:shadow-2xl">
           <div class="card-body">
             <h2 class="card-title">{accountBook.name}</h2>

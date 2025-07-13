@@ -78,7 +78,7 @@
         <div class="card-body">
           <h2 class="card-title">Account Book Members</h2>
           <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {#each accountBook.members as member}
+            {#each accountBook.members as member (member.id)}
               <div class="bg-base-200 flex items-center gap-4 rounded-lg p-4">
                 {#if member.pictureUrl}
                   <div class="avatar">

@@ -40,7 +40,7 @@
   );
 
   // For the select binding - synced with the derived pageSize
-  let pageSizeSelect = $state(20);
+  let pageSizeSelect = $derived(pageSize);
   let totalPages = $state(0);
   let totalElements = $state(0);
 
@@ -207,10 +207,6 @@
     } finally {
       deleting = false;
     }
-  }
-
-  function showDeleteConfirmation() {
-    showDeleteModal = true;
   }
 
   function handleDeleteCancel() {
@@ -383,10 +379,15 @@
     // Track all the derived values that affect record loading
     const page = currentPage;
     const size = pageSize;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const category = selectedCategory;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const type = recordType;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const start = startDate;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const end = endDate;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const direction = sortDirection;
 
     // Only reload if we have valid pagination values and the component is fully mounted
@@ -554,7 +555,7 @@
                   onchange={handleFilterChange}
                 >
                   <option value={undefined}>All Categories</option>
-                  {#each accountBook.categories as category}
+                  {#each accountBook.categories as category (category.id)}
                     <option value={category.name}>{category.name}</option>
                   {/each}
                 </select>
@@ -634,7 +635,7 @@
           </div>
         {:else}
           <div class="space-y-2">
-            {#each records as record}
+            {#each records as record (record.id)}
               <div
                 class="card bg-base-100 border-base-300 border shadow-sm transition-shadow hover:shadow-md"
               >
@@ -793,7 +794,7 @@
                 <div class="flex items-center gap-1">
                   <input
                     type="number"
-                    class="input input-bordered w-10 py-0 text-center text-sm [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                    class="input input-bordered w-10 [appearance:textfield] py-0 text-center text-sm [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
                     min="1"
                     max={totalPages}
                     value={currentPage}
@@ -901,7 +902,7 @@
           <p class="text-base-content/70">No active invitations</p>
         {:else}
           <div class="space-y-2">
-            {#each invitations as invitation}
+            {#each invitations as invitation (invitation.id)}
               <div class="bg-base-200 flex items-center justify-between rounded p-3">
                 <div>
                   <p class="font-mono text-sm">{invitation.id}</p>
