@@ -498,13 +498,7 @@
         </p>
       </div>
 
-      <div class="flex flex-col gap-2 sm:flex-row">
-        <a
-          href="/account-books/{accountBookId}/records/new"
-          class="btn btn-primary btn-sm sm:btn-md"
-        >
-          + Add Record
-        </a>
+      <div class="flex gap-2 self-end">
         <div class="dropdown sm:dropdown-end">
           <div tabindex="0" role="button" class="btn btn-outline btn-sm sm:btn-md">⚙️ Options</div>
           <!-- svelte-ignore a11y_no_noninteractive_tabindex -->
@@ -524,6 +518,12 @@
             {/if}
           </ul>
         </div>
+        <a
+          href="/account-books/{accountBookId}/records/new"
+          class="btn btn-primary btn-sm sm:btn-md"
+        >
+          + Add Record
+        </a>
       </div>
     </div>
 

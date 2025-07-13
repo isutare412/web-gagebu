@@ -232,8 +232,8 @@
         <h1 class="text-3xl font-bold">{record.summary}</h1>
       </div>
 
-      <div class="flex gap-2">
-        {#if canEditRecord}
+      {#if canEditRecord}
+        <div class="flex gap-2 self-end">
           <button class="btn btn-outline" onclick={startEdit}> ✏️ Edit </button>
           <button class="btn btn-error" onclick={showDeleteConfirmation} disabled={deleting}>
             {#if deleting}
@@ -241,8 +241,8 @@
             {/if}
             🗑️ Delete
           </button>
-        {/if}
-      </div>
+        </div>
+      {/if}
     </div>
 
     <!-- Record Details -->
