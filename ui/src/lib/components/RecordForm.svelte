@@ -130,14 +130,12 @@
   <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
     <fieldset class="fieldset">
       <legend class="fieldset-legend">Amount *</legend>
-      <label
-        class="input input-bordered flex items-center gap-2 {amountError ? 'input-error' : ''}"
-      >
-        <span class="text-base-content/70">₩</span>
+      <div class="relative">
+        <span class="absolute left-3 top-1/2 -translate-y-1/2 text-base-content/70 pointer-events-none z-10">₩</span>
         <input
           id="amount"
           type="text"
-          class="grow [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+          class="input input-bordered w-full pl-8 [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none {amountError ? 'input-error' : ''}"
           bind:value={formData.amount}
           oninput={handleAmountInput}
           placeholder="0"
@@ -146,7 +144,7 @@
           min="0"
           step="1"
         />
-      </label>
+      </div>
       {#if amountError}
         <p class="label text-error mt-1 text-sm">{amountError}</p>
       {/if}
