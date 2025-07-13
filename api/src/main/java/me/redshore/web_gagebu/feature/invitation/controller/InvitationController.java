@@ -13,6 +13,7 @@ import me.redshore.web_gagebu.feature.invitation.dto.response.InvitationView;
 import me.redshore.web_gagebu.feature.invitation.mapping.InvitationMapper;
 import me.redshore.web_gagebu.feature.invitation.service.InvitationService;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -45,6 +46,14 @@ public class InvitationController {
     public InvitationView createInvitation(@PathVariable UUID accountBookId) {
         final var invitationDto = this.invitationService.createInvitation(accountBookId);
         return this.invitationMapper.toView(invitationDto);
+    }
+
+    @DeleteMapping("/account-books/{accountBookId}/invitations/{invitationId}")
+    @Operation(summary = "Delete an invitation")
+    @Tag(name = "AccountBook")
+    public void deleteInvitation(@PathVariable UUID accountBookId,
+                                 @PathVariable UUID invitationId) {
+        this.invitationService.deleteInvitation(accountBookId, invitationId);
     }
 
     @PostMapping("/invitations/{invitationId}/join")

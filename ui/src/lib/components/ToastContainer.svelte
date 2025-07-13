@@ -23,7 +23,7 @@
 </script>
 
 <div
-  class="fixed right-4 bottom-4 left-4 z-50 flex flex-col items-center space-y-2 md:top-4 md:right-4 md:bottom-auto md:left-auto md:w-auto md:items-end"
+  class="fixed right-4 bottom-4 left-4 z-[9999] flex flex-col items-center space-y-2 md:top-4 md:right-4 md:bottom-auto md:left-auto md:w-auto md:items-end"
 >
   {#each toastState.toasts as toast (toast.id)}
     <div

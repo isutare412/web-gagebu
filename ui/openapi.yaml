@@ -566,6 +566,38 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+  /api/v1/account-books/{accountBookId}/invitations/{invitationId}:
+    delete:
+      tags:
+        - AccountBook
+        - Invitation
+      summary: Delete an invitation
+      operationId: deleteInvitation
+      parameters:
+        - name: accountBookId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: invitationId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: OK
+        default:
+          description: Error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+        - cookieTokenAuth: []
+        - bearerTokenAuth: []
 components:
   schemas:
     UserUpdateRequest:

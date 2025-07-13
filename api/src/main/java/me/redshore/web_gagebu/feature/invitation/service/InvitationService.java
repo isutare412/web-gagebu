@@ -69,6 +69,24 @@ public class InvitationService {
     }
 
     @Transactional
+    @PreAuthorize("hasRole('ADMIN') or @accountBookAuthorizer.canManage(#accountBookId)")
+    public void deleteInvitation(UUID accountBookId, UUID invitationId) {
+        final var invitation = this.invitationRepository
+            .findById(invitationId)
+            .orElseThrow(() -> new AppException(ErrorCode.NOT_FOUND,
+                                                String.format("Invitation with id %s not found",
+                                                              invitationId)));
+
+        if (!invitation.getAccountBook().getId().equals(accountBookId)) {
+            throw new AppException(ErrorCode.CONFLICT,
+                                   String.format("Invitation %s does not belong to account book %s",
+                                                 invitationId, accountBookId));
+        }
+
+        this.invitationRepository.deleteById(invitationId);
+    }
+
+    @Transactional
     public void joinInvitation(UUID invitationId, UUID userId) {
         final var user = this.userRepository
             .findById(userId)

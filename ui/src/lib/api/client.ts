@@ -87,6 +87,10 @@ export const api = {
     apiClient.POST('/api/v1/account-books/{accountBookId}/invitations', {
       params: { path: { accountBookId } },
     }),
+  deleteInvitation: (accountBookId: string, invitationId: string) =>
+    apiClient.DELETE('/api/v1/account-books/{accountBookId}/invitations/{invitationId}', {
+      params: { path: { accountBookId, invitationId } },
+    }),
   joinInvitation: (invitationId: string) =>
     apiClient.POST('/api/v1/invitations/{invitationId}/join', {
       params: { path: { invitationId } },
