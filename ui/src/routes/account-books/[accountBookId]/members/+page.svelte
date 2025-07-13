@@ -5,7 +5,7 @@
   import type { components } from '$lib/api/schema';
   import Loading from '$lib/components/Loading.svelte';
   import { showApiErrorToast } from '$lib/stores/toast.svelte';
-  import { isAuthenticated } from '$lib/stores/user.svelte';
+  import { isAuthenticated, userState } from '$lib/stores/user.svelte';
   import { onMount } from 'svelte';
 
   type AccountBookView = components['schemas']['AccountBookView'];
@@ -94,9 +94,14 @@
                   </div>
                 {/if}
                 <div class="flex-1">
-                  <p class="font-semibold">{member.nickname}</p>
+                  <div class="flex items-center gap-2">
+                    <p class="font-semibold">{member.nickname}</p>
+                    {#if member.userId === userState.user?.id}
+                      <div class="badge badge-primary badge-sm">Me</div>
+                    {/if}
+                  </div>
                   {#if member.role === 'OWNER'}
-                    <div class="badge badge-primary badge-sm">Owner</div>
+                    <div class="badge badge-outline badge-sm">Owner</div>
                   {:else}
                     <div class="badge badge-outline badge-sm">Member</div>
                   {/if}
