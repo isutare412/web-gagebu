@@ -3,6 +3,7 @@
   import { api } from '$lib/api/client';
   import { showApiErrorToast } from '$lib/stores/toast.svelte';
   import { isAuthenticated, userState } from '$lib/stores/user.svelte';
+  import ThemeToggle from './ThemeToggle.svelte';
 
   async function handleLogout() {
     try {
@@ -50,37 +51,42 @@
           <a href="/" class="btn btn-ghost text-xl">💰 GageBu</a>
         </div>
         <div class="navbar-end flex-none">
-          {#if isAuthenticated() && userState.user}
-            <div class="dropdown dropdown-end">
-              <div tabindex="0" role="button" class="btn btn-ghost btn-circle avatar">
-                <div class="w-10 rounded-full">
-                  {#if userState.user.pictureUrl}
-                    <img alt="Profile" src={userState.user.pictureUrl} />
-                  {:else}
-                    <div
-                      class="bg-neutral text-neutral-content flex h-10 w-10 items-center justify-center rounded-full"
-                    >
-                      {userState.user.nickname?.charAt(0) || userState.user.email?.charAt(0) || '?'}
-                    </div>
-                  {/if}
+          <div class="flex items-center gap-2">
+            <ThemeToggle />
+            {#if isAuthenticated() && userState.user}
+              <div class="dropdown dropdown-end">
+                <div tabindex="0" role="button" class="btn btn-ghost btn-circle avatar">
+                  <div class="w-10 rounded-full">
+                    {#if userState.user.pictureUrl}
+                      <img alt="Profile" src={userState.user.pictureUrl} />
+                    {:else}
+                      <div
+                        class="bg-neutral text-neutral-content flex h-10 w-10 items-center justify-center rounded-full"
+                      >
+                        {userState.user.nickname?.charAt(0) ||
+                          userState.user.email?.charAt(0) ||
+                          '?'}
+                      </div>
+                    {/if}
+                  </div>
                 </div>
+                <!-- svelte-ignore a11y_no_noninteractive_tabindex -->
+                <ul
+                  tabindex="0"
+                  class="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow"
+                >
+                  <li>
+                    <a href="/profile" class="justify-between"> Profile </a>
+                  </li>
+                  <li><button onclick={handleLogout}>Logout</button></li>
+                </ul>
               </div>
-              <!-- svelte-ignore a11y_no_noninteractive_tabindex -->
-              <ul
-                tabindex="0"
-                class="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow"
-              >
-                <li>
-                  <a href="/profile" class="justify-between"> Profile </a>
-                </li>
-                <li><button onclick={handleLogout}>Logout</button></li>
-              </ul>
-            </div>
-          {:else}
-            <a href="/api/v1/oauth2/authorization/google" class="btn btn-primary">
-              Login with Google
-            </a>
-          {/if}
+            {:else}
+              <a href="/api/v1/oauth2/authorization/google" class="btn btn-primary">
+                Login with Google
+              </a>
+            {/if}
+          </div>
         </div>
       </div>
     </div>
@@ -91,22 +97,25 @@
     <div class="menu bg-base-100 text-base-content min-h-full w-80 p-4">
       <div class="mb-6 flex items-center justify-between">
         <span class="text-xl font-bold">💰 GageBu</span>
-        <label for="mobile-drawer" class="btn btn-sm btn-ghost">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            class="h-5 w-5"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M6 18L18 6M6 6l12 12"
-            />
-          </svg>
-        </label>
+        <div class="flex items-center gap-2">
+          <ThemeToggle />
+          <label for="mobile-drawer" class="btn btn-sm btn-ghost">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+          </label>
+        </div>
       </div>
 
       <ul class="menu-compact">
@@ -180,37 +189,40 @@
       </div>
 
       <div class="navbar-end flex-none">
-        {#if isAuthenticated() && userState.user}
-          <div class="dropdown dropdown-end">
-            <div tabindex="0" role="button" class="btn btn-ghost btn-circle avatar">
-              <div class="w-10 rounded-full">
-                {#if userState.user.pictureUrl}
-                  <img alt="Profile" src={userState.user.pictureUrl} />
-                {:else}
-                  <div
-                    class="bg-neutral text-neutral-content flex h-10 w-10 items-center justify-center rounded-full"
-                  >
-                    {userState.user.nickname?.charAt(0) || userState.user.email?.charAt(0) || '?'}
-                  </div>
-                {/if}
+        <div class="flex items-center gap-2">
+          <ThemeToggle />
+          {#if isAuthenticated() && userState.user}
+            <div class="dropdown dropdown-end">
+              <div tabindex="0" role="button" class="btn btn-ghost btn-circle avatar">
+                <div class="w-10 rounded-full">
+                  {#if userState.user.pictureUrl}
+                    <img alt="Profile" src={userState.user.pictureUrl} />
+                  {:else}
+                    <div
+                      class="bg-neutral text-neutral-content flex h-10 w-10 items-center justify-center rounded-full"
+                    >
+                      {userState.user.nickname?.charAt(0) || userState.user.email?.charAt(0) || '?'}
+                    </div>
+                  {/if}
+                </div>
               </div>
+              <!-- svelte-ignore a11y_no_noninteractive_tabindex -->
+              <ul
+                tabindex="0"
+                class="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow"
+              >
+                <li>
+                  <a href="/profile" class="justify-between"> Profile </a>
+                </li>
+                <li><button onclick={handleLogout}>Logout</button></li>
+              </ul>
             </div>
-            <!-- svelte-ignore a11y_no_noninteractive_tabindex -->
-            <ul
-              tabindex="0"
-              class="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow"
-            >
-              <li>
-                <a href="/profile" class="justify-between"> Profile </a>
-              </li>
-              <li><button onclick={handleLogout}>Logout</button></li>
-            </ul>
-          </div>
-        {:else}
-          <a href="/api/v1/oauth2/authorization/google" class="btn btn-primary">
-            Login with Google
-          </a>
-        {/if}
+          {:else}
+            <a href="/api/v1/oauth2/authorization/google" class="btn btn-primary">
+              Login with Google
+            </a>
+          {/if}
+        </div>
       </div>
     </div>
   </div>

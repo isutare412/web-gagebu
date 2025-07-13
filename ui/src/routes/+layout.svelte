@@ -10,8 +10,6 @@
 
   let { children } = $props();
 
-  // Get reactive loading state
-
   onMount(async () => {
     try {
       const response = await api.getCurrentUser();
