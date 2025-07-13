@@ -502,7 +502,7 @@
 
       <div class="flex gap-2 self-end">
         <div class="dropdown sm:dropdown-end">
-          <div tabindex="0" role="button" class="btn btn-outline btn-sm sm:btn-md">⚙️ Options</div>
+          <div tabindex="0" role="button" class="btn btn-sm sm:btn-md">⚙️ Options</div>
           <!-- svelte-ignore a11y_no_noninteractive_tabindex -->
           <ul
             tabindex="0"
@@ -516,7 +516,9 @@
               <li><button onclick={() => (showInviteModal = true)}>Manage Invitations</button></li>
             {/if}
             {#if isOwner}
-              <li><button onclick={deleteAccountBook} class="text-error">Delete</button></li>
+              <li>
+                <button onclick={() => (showDeleteModal = true)} class="text-error">Delete</button>
+              </li>
             {/if}
           </ul>
         </div>
@@ -610,7 +612,7 @@
           <div class="mt-4 flex flex-col gap-4 sm:flex-row sm:items-center">
             <div class="flex flex-col gap-2 sm:flex-row">
               <button class="btn btn-primary" onclick={applyFilters}>Apply Filters</button>
-              <button class="btn btn-outline" onclick={resetFilters}>Reset</button>
+              <button class="btn" onclick={resetFilters}>Reset</button>
             </div>
             <div class="flex flex-col gap-2 sm:ml-auto sm:flex-row sm:items-center">
               <span class="text-sm">Show:</span>
@@ -946,13 +948,22 @@
                   </p>
                 </div>
                 <button
-                  class="btn btn-xs btn-outline"
+                  class="btn btn-sm btn-square"
                   onclick={() =>
                     navigator.clipboard.writeText(
                       window.location.origin + '/invitations/' + invitation.id
                     )}
+                  title="Copy Link"
+                  aria-label="Copy Link"
                 >
-                  Copy Link
+                  <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                    />
+                  </svg>
                 </button>
               </div>
             {/each}

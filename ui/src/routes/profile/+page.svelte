@@ -117,7 +117,7 @@
             {:else}
               <div class="flex items-center gap-2">
                 <span class="text-lg">{userState.user.nickname || 'Not set'}</span>
-                <button class="btn btn-outline btn-sm" onclick={startEdit}> Edit </button>
+                <button class="btn btn-sm" onclick={startEdit}> Edit </button>
               </div>
             {/if}
           </div>

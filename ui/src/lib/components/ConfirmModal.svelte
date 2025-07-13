@@ -38,7 +38,7 @@
       <h3 class="text-lg font-bold">{title}</h3>
       <p class="py-4">{message}</p>
       <div class="modal-action">
-        <button class="btn btn-outline" onclick={handleCancel} disabled={loading}>
+        <button class="btn" onclick={handleCancel} disabled={loading}>
           {cancelText}
         </button>
         <button class="btn btn-error" onclick={handleConfirm} disabled={loading}>

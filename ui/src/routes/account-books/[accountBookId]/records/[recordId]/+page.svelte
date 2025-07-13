@@ -234,7 +234,7 @@
 
       {#if canEditRecord}
         <div class="flex gap-2 self-end">
-          <button class="btn btn-outline" onclick={startEdit}> ✏️ Edit </button>
+          <button class="btn" onclick={startEdit}> ✏️ Edit </button>
           <button class="btn btn-error" onclick={showDeleteConfirmation} disabled={deleting}>
             {#if deleting}
               <Loading size="sm" />

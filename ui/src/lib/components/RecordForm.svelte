@@ -234,7 +234,7 @@
 
   <!-- Actions -->
   <div class="flex gap-4 pt-4">
-    <button type="button" class="btn btn-outline {isModal ? '' : 'flex-1'}" onclick={onCancel}>
+    <button type="button" class="btn {isModal ? '' : 'flex-1'}" onclick={onCancel}>
       Cancel
     </button>
     <button
