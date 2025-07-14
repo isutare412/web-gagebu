@@ -34,7 +34,6 @@ public class InvitationController {
 
     @GetMapping("/account-books/{accountBookId}/invitations")
     @Operation(summary = "List current valid invitations for an account book")
-    @Tag(name = "AccountBook")
     public InvitationListResponose listInvitations(@PathVariable UUID accountBookId) {
         final var listResult = this.invitationService.listInvitations(accountBookId);
         return this.invitationMapper.toListResponse(listResult);
@@ -42,7 +41,6 @@ public class InvitationController {
 
     @PostMapping("/account-books/{accountBookId}/invitations")
     @Operation(summary = "Create an invitation for an account book")
-    @Tag(name = "AccountBook")
     public InvitationView createInvitation(@PathVariable UUID accountBookId) {
         final var invitationDto = this.invitationService.createInvitation(accountBookId);
         return this.invitationMapper.toView(invitationDto);
@@ -50,7 +48,6 @@ public class InvitationController {
 
     @DeleteMapping("/account-books/{accountBookId}/invitations/{invitationId}")
     @Operation(summary = "Delete an invitation")
-    @Tag(name = "AccountBook")
     public void deleteInvitation(@PathVariable UUID accountBookId,
                                  @PathVariable UUID invitationId) {
         this.invitationService.deleteInvitation(accountBookId, invitationId);

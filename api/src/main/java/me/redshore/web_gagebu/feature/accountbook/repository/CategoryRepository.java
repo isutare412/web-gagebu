@@ -15,4 +15,11 @@ public interface CategoryRepository extends JpaRepository<Category, UUID> {
     List<UUID> findIdsByAccountBookIdAndNameIn(@Param("accountBookId") UUID accountBookId,
                                                @Param("names") List<String> names);
 
+    List<Category> findAllByAccountBookIdOrderByCreatedAtAsc(UUID accountBookId);
+
+    void deleteAllByAccountBookIdAndIdNotIn(UUID accountBookId, List<UUID> categoryIds);
+
+    void deleteAllByAccountBookIdAndIdNotInAndIsBasicFalse(UUID accountBookId,
+                                                           List<UUID> categoryIds);
+
 }

@@ -7,6 +7,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OrderBy;
 import jakarta.persistence.Table;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,6 +40,7 @@ public class AccountBook extends BaseEntity {
     private List<Member> members = new ArrayList<>();
 
     @OneToMany(mappedBy = "accountBook", orphanRemoval = true, cascade = {CascadeType.PERSIST})
+    @OrderBy("createdAt ASC")
     @Builder.Default
     private List<Category> categories = new ArrayList<>();
 
