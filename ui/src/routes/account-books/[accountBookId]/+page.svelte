@@ -8,7 +8,7 @@
   import RecordCard from '$lib/components/RecordCard.svelte';
   import { showApiErrorToast, showSuccessToast } from '$lib/stores/toast.svelte';
   import { isAuthenticated, userState } from '$lib/stores/user.svelte';
-  import { formatDateISO, formatDateTimeISO } from '$lib/utils/date';
+  import { formatDateTimeISO } from '$lib/utils/date';
   import { onMount, tick } from 'svelte';
 
   type AccountBookView = components['schemas']['AccountBookView'];
@@ -509,294 +509,294 @@
     </ul>
   </div>
 
-    <!-- Header -->
-    <div class="mb-6 flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
-      <div>
-        <h1 class="text-3xl font-bold">{accountBook.name}</h1>
-        <p class="text-base-content/70">
-          {accountBook.members?.length || 0} members • {totalElements} records
-        </p>
-      </div>
+  <!-- Header -->
+  <div class="mb-6 flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
+    <div>
+      <h1 class="text-3xl font-bold">{accountBook.name}</h1>
+      <p class="text-base-content/70">
+        {accountBook.members?.length || 0} members • {totalElements} records
+      </p>
+    </div>
 
-      <div class="flex gap-2 self-end">
-        <div class="dropdown sm:dropdown-end">
-          <div tabindex="0" role="button" class="btn btn-sm sm:btn-md">⚙️ Options</div>
-          <!-- svelte-ignore a11y_no_noninteractive_tabindex -->
-          <ul
-            tabindex="0"
-            class="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow"
-          >
-            {#if isOwner}
-              <li><button onclick={() => (showEditModal = true)}>Edit Name</button></li>
-            {/if}
-            <li><a href="/account-books/{accountBookId}/members">View Members</a></li>
-            {#if isOwner}
-              <li><button onclick={() => (showInviteModal = true)}>Manage Invitations</button></li>
-            {/if}
-            {#if isOwner}
-              <li>
-                <button onclick={() => (showDeleteModal = true)} class="text-error">Delete</button>
-              </li>
-            {/if}
-          </ul>
-        </div>
-        <a
-          href="/account-books/{accountBookId}/records/new"
-          class="btn btn-primary btn-sm sm:btn-md"
+    <div class="flex gap-2 self-end">
+      <div class="dropdown sm:dropdown-end">
+        <div tabindex="0" role="button" class="btn btn-sm sm:btn-md">⚙️ Options</div>
+        <!-- svelte-ignore a11y_no_noninteractive_tabindex -->
+        <ul
+          tabindex="0"
+          class="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow"
         >
-          + Add Record
-        </a>
+          {#if isOwner}
+            <li><button onclick={() => (showEditModal = true)}>Edit Name</button></li>
+          {/if}
+          <li><a href="/account-books/{accountBookId}/members">View Members</a></li>
+          {#if isOwner}
+            <li><a href="/account-books/{accountBookId}/categories">Manage Categories</a></li>
+          {/if}
+          {#if isOwner}
+            <li><button onclick={() => (showInviteModal = true)}>Manage Invitations</button></li>
+          {/if}
+          {#if isOwner}
+            <li>
+              <button onclick={() => (showDeleteModal = true)} class="text-error">Delete</button>
+            </li>
+          {/if}
+        </ul>
       </div>
+      <a href="/account-books/{accountBookId}/records/new" class="btn btn-primary btn-sm sm:btn-md">
+        + Add Record
+      </a>
     </div>
+  </div>
 
-    <!-- Filters -->
-    <div class="card bg-base-100 mb-6 shadow-lg">
-      <div class="card-body p-4 sm:p-6">
-        <div class="flex items-center justify-between">
-          <h2 class="card-title">Filters</h2>
-          <button class="btn btn-ghost btn-sm" onclick={() => (showFilters = !showFilters)}>
-            {showFilters ? '▼' : '▶'}
-            {showFilters ? 'Hide' : 'Show'} Filters
-          </button>
-        </div>
+  <!-- Filters -->
+  <div class="card bg-base-100 mb-6 shadow-lg">
+    <div class="card-body p-4 sm:p-6">
+      <div class="flex items-center justify-between">
+        <h2 class="card-title">Filters</h2>
+        <button class="btn btn-ghost btn-sm" onclick={() => (showFilters = !showFilters)}>
+          {showFilters ? '▼' : '▶'}
+          {showFilters ? 'Hide' : 'Show'} Filters
+        </button>
+      </div>
 
-        {#if showFilters}
-          <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
-            <!-- Record Type -->
+      {#if showFilters}
+        <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+          <!-- Record Type -->
+          <div class="form-control">
+            <label class="label" for="record-type">
+              <span class="label-text">Type</span>
+            </label>
+            <select
+              id="record-type"
+              class="select select-bordered"
+              bind:value={recordTypeInput}
+              onchange={handleFilterChange}
+            >
+              <option value={undefined}>All Types</option>
+              <option value="INCOME">Income</option>
+              <option value="EXPENSE">Expense</option>
+            </select>
+          </div>
+
+          <!-- Categories -->
+          {#if accountBook.categories && accountBook.categories.length > 0}
             <div class="form-control">
-              <label class="label" for="record-type">
-                <span class="label-text">Type</span>
+              <label class="label" for="categories">
+                <span class="label-text">Category</span>
               </label>
               <select
-                id="record-type"
+                id="categories"
                 class="select select-bordered"
-                bind:value={recordTypeInput}
+                bind:value={selectedCategoryInput}
                 onchange={handleFilterChange}
               >
-                <option value={undefined}>All Types</option>
-                <option value="INCOME">Income</option>
-                <option value="EXPENSE">Expense</option>
+                <option value={undefined}>All Categories</option>
+                {#each accountBook.categories as category (category.id)}
+                  <option value={category.name}>{category.name}</option>
+                {/each}
               </select>
-            </div>
-
-            <!-- Categories -->
-            {#if accountBook.categories && accountBook.categories.length > 0}
-              <div class="form-control">
-                <label class="label" for="categories">
-                  <span class="label-text">Category</span>
-                </label>
-                <select
-                  id="categories"
-                  class="select select-bordered"
-                  bind:value={selectedCategoryInput}
-                  onchange={handleFilterChange}
-                >
-                  <option value={undefined}>All Categories</option>
-                  {#each accountBook.categories as category (category.id)}
-                    <option value={category.name}>{category.name}</option>
-                  {/each}
-                </select>
-              </div>
-            {/if}
-
-            <!-- Date Range -->
-            <div class="form-control">
-              <label class="label" for="start-date">
-                <span class="label-text">Start Date</span>
-              </label>
-              <input
-                id="start-date"
-                type="date"
-                class="input input-bordered"
-                bind:value={startDateInput}
-                onchange={handleFilterChange}
-              />
-            </div>
-
-            <div class="form-control">
-              <label class="label" for="end-date">
-                <span class="label-text">End Date</span>
-              </label>
-              <input
-                id="end-date"
-                type="date"
-                class="input input-bordered"
-                bind:value={endDateInput}
-                onchange={handleFilterChange}
-              />
-            </div>
-          </div>
-
-          <div class="mt-4 flex flex-col gap-4 sm:flex-row sm:items-center">
-            <div class="flex flex-col gap-2 sm:flex-row">
-              <button class="btn btn-primary" onclick={applyFilters}>Apply Filters</button>
-              <button class="btn" onclick={resetFilters}>Reset</button>
-            </div>
-            <div class="flex flex-col gap-2 sm:ml-auto sm:flex-row sm:items-center">
-              <span class="text-sm">Show:</span>
-              <select
-                class="select select-bordered select-sm"
-                bind:value={pageSizeSelect}
-                onchange={() => changePageSize(pageSizeSelect)}
-              >
-                <option value={10}>10 per page</option>
-                <option value={20}>20 per page</option>
-                <option value={50}>50 per page</option>
-                <option value={100}>100 per page</option>
-              </select>
-              <select class="select select-bordered select-sm" bind:value={sortDirection}>
-                <option value="DESCENDING">Newest First</option>
-                <option value="ASCENDING">Oldest First</option>
-              </select>
-            </div>
-          </div>
-        {/if}
-      </div>
-    </div>
-
-    <!-- Records -->
-    <div class="card bg-base-100 shadow-lg">
-      <div class="card-body p-4 sm:p-6">
-        <div class="flex items-center justify-between">
-          <h2 class="card-title">Records</h2>
-          <button
-            class="btn btn-ghost btn-circle btn-sm"
-            onclick={loadRecords}
-            disabled={recordsLoading}
-            title="Refresh records"
-            aria-label="Refresh records"
-          >
-            <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-              />
-            </svg>
-          </button>
-        </div>
-
-        {#if recordsLoading}
-          <Loading size="lg" message="Loading records..." />
-        {:else if records.length === 0}
-          <div class="py-12 text-center">
-            <div class="mb-4 text-6xl">📝</div>
-            <h3 class="mb-2 text-xl font-semibold">No records found</h3>
-            <p class="text-base-content/70 mb-4">Start adding some income and expense records!</p>
-            <a href="/account-books/{accountBookId}/records/new" class="btn btn-primary">
-              Add First Record
-            </a>
-          </div>
-        {:else}
-          <div class="space-y-2">
-            {#each records as record (record.id)}
-              <RecordCard
-                record={{
-                  id: record.id,
-                  summary: record.summary,
-                  date: record.date,
-                  recordType: record.recordType,
-                  amount: record.amount || 0,
-                  category: record.category,
-                  userNickname: record.userNickname,
-                  userPictureUrl: record.userPictureUrl,
-                }}
-                accountBookId={accountBookId}
-                showActions={true}
-                isPreview={false}
-              />
-            {/each}
-          </div>
-
-          <!-- Pagination -->
-          {#if totalPages > 1}
-            <div class="mt-6 flex flex-col items-center gap-4 sm:flex-row sm:justify-between">
-              <div class="text-base-content/70 text-sm">
-                Showing {Math.min((currentPage - 1) * pageSize + 1, totalElements)} to {Math.min(
-                  currentPage * pageSize,
-                  totalElements
-                )} of {totalElements} records
-              </div>
-              <div class="flex items-center gap-2">
-                <!-- Previous Page Button -->
-                <button
-                  class="btn btn-sm"
-                  onclick={() => changePage(currentPage - 1)}
-                  disabled={currentPage <= 1 || recordsLoading}
-                  title="Previous Page"
-                >
-                  {#if recordsLoading}
-                    <Loading size="sm" />
-                  {:else}
-                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M15 19l-7-7 7-7"
-                      />
-                    </svg>
-                  {/if}
-                </button>
-
-                <!-- Page Input -->
-                <div class="flex items-center gap-1">
-                  <input
-                    type="number"
-                    class="input input-bordered w-10 [appearance:textfield] py-0 text-center text-sm [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
-                    min="1"
-                    max={totalPages}
-                    value={currentPage}
-                    disabled={recordsLoading}
-                    onchange={(e) => {
-                      const target = e.target as HTMLInputElement;
-                      const page = parseInt(target.value);
-                      if (page >= 1 && page <= totalPages && !recordsLoading) {
-                        changePage(page);
-                      }
-                    }}
-                  />
-                  <span class="text-base-content/70 text-sm">of {totalPages}</span>
-                </div>
-
-                <!-- Next Page Button -->
-                <button
-                  class="btn btn-sm"
-                  onclick={() => changePage(currentPage + 1)}
-                  disabled={currentPage >= totalPages || recordsLoading}
-                  title="Next Page"
-                >
-                  {#if recordsLoading}
-                    <Loading size="sm" />
-                  {:else}
-                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M9 5l7 7-7 7"
-                      />
-                    </svg>
-                  {/if}
-                </button>
-              </div>
-            </div>
-
-            <!-- Keyboard Navigation Hint -->
-            <div class="mt-2 text-center">
-              <span class="text-base-content/50 text-xs">
-                💡 Tip: Use Shift + ← → to navigate pages, Shift + Home/End for first/last page
-              </span>
-            </div>
-          {:else if totalElements > 0}
-            <div class="text-base-content/70 mt-6 text-center text-sm">
-              Showing all {totalElements} records
             </div>
           {/if}
-        {/if}
-      </div>
+
+          <!-- Date Range -->
+          <div class="form-control">
+            <label class="label" for="start-date">
+              <span class="label-text">Start Date</span>
+            </label>
+            <input
+              id="start-date"
+              type="date"
+              class="input input-bordered"
+              bind:value={startDateInput}
+              onchange={handleFilterChange}
+            />
+          </div>
+
+          <div class="form-control">
+            <label class="label" for="end-date">
+              <span class="label-text">End Date</span>
+            </label>
+            <input
+              id="end-date"
+              type="date"
+              class="input input-bordered"
+              bind:value={endDateInput}
+              onchange={handleFilterChange}
+            />
+          </div>
+        </div>
+
+        <div class="mt-4 flex flex-col gap-4 sm:flex-row sm:items-center">
+          <div class="flex flex-col gap-2 sm:flex-row">
+            <button class="btn btn-primary" onclick={applyFilters}>Apply Filters</button>
+            <button class="btn" onclick={resetFilters}>Reset</button>
+          </div>
+          <div class="flex flex-col gap-2 sm:ml-auto sm:flex-row sm:items-center">
+            <span class="text-sm">Show:</span>
+            <select
+              class="select select-bordered select-sm"
+              bind:value={pageSizeSelect}
+              onchange={() => changePageSize(pageSizeSelect)}
+            >
+              <option value={10}>10 per page</option>
+              <option value={20}>20 per page</option>
+              <option value={50}>50 per page</option>
+              <option value={100}>100 per page</option>
+            </select>
+            <select class="select select-bordered select-sm" bind:value={sortDirection}>
+              <option value="DESCENDING">Newest First</option>
+              <option value="ASCENDING">Oldest First</option>
+            </select>
+          </div>
+        </div>
+      {/if}
     </div>
+  </div>
+
+  <!-- Records -->
+  <div class="card bg-base-100 shadow-lg">
+    <div class="card-body p-4 sm:p-6">
+      <div class="flex items-center justify-between">
+        <h2 class="card-title">Records</h2>
+        <button
+          class="btn btn-ghost btn-circle btn-sm"
+          onclick={loadRecords}
+          disabled={recordsLoading}
+          title="Refresh records"
+          aria-label="Refresh records"
+        >
+          <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+            />
+          </svg>
+        </button>
+      </div>
+
+      {#if recordsLoading}
+        <Loading size="lg" message="Loading records..." />
+      {:else if records.length === 0}
+        <div class="py-12 text-center">
+          <div class="mb-4 text-6xl">📝</div>
+          <h3 class="mb-2 text-xl font-semibold">No records found</h3>
+          <p class="text-base-content/70 mb-4">Start adding some income and expense records!</p>
+          <a href="/account-books/{accountBookId}/records/new" class="btn btn-primary">
+            Add First Record
+          </a>
+        </div>
+      {:else}
+        <div class="space-y-2">
+          {#each records as record (record.id)}
+            <RecordCard
+              record={{
+                id: record.id,
+                summary: record.summary,
+                date: record.date,
+                recordType: record.recordType,
+                amount: record.amount || 0,
+                category: record.category,
+                userNickname: record.userNickname,
+                userPictureUrl: record.userPictureUrl,
+              }}
+              {accountBookId}
+              showActions={true}
+              isPreview={false}
+            />
+          {/each}
+        </div>
+
+        <!-- Pagination -->
+        {#if totalPages > 1}
+          <div class="mt-6 flex flex-col items-center gap-4 sm:flex-row sm:justify-between">
+            <div class="text-base-content/70 text-sm">
+              Showing {Math.min((currentPage - 1) * pageSize + 1, totalElements)} to {Math.min(
+                currentPage * pageSize,
+                totalElements
+              )} of {totalElements} records
+            </div>
+            <div class="flex items-center gap-2">
+              <!-- Previous Page Button -->
+              <button
+                class="btn btn-sm"
+                onclick={() => changePage(currentPage - 1)}
+                disabled={currentPage <= 1 || recordsLoading}
+                title="Previous Page"
+              >
+                {#if recordsLoading}
+                  <Loading size="sm" />
+                {:else}
+                  <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M15 19l-7-7 7-7"
+                    />
+                  </svg>
+                {/if}
+              </button>
+
+              <!-- Page Input -->
+              <div class="flex items-center gap-1">
+                <input
+                  type="number"
+                  class="input input-bordered w-10 py-0 text-center text-sm [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                  min="1"
+                  max={totalPages}
+                  value={currentPage}
+                  disabled={recordsLoading}
+                  onchange={(e) => {
+                    const target = e.target as HTMLInputElement;
+                    const page = parseInt(target.value);
+                    if (page >= 1 && page <= totalPages && !recordsLoading) {
+                      changePage(page);
+                    }
+                  }}
+                />
+                <span class="text-base-content/70 text-sm">of {totalPages}</span>
+              </div>
+
+              <!-- Next Page Button -->
+              <button
+                class="btn btn-sm"
+                onclick={() => changePage(currentPage + 1)}
+                disabled={currentPage >= totalPages || recordsLoading}
+                title="Next Page"
+              >
+                {#if recordsLoading}
+                  <Loading size="sm" />
+                {:else}
+                  <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M9 5l7 7-7 7"
+                    />
+                  </svg>
+                {/if}
+              </button>
+            </div>
+          </div>
+
+          <!-- Keyboard Navigation Hint -->
+          <div class="mt-2 text-center">
+            <span class="text-base-content/50 text-xs">
+              💡 Tip: Use Shift + ← → to navigate pages, Shift + Home/End for first/last page
+            </span>
+          </div>
+        {:else if totalElements > 0}
+          <div class="text-base-content/70 mt-6 text-center text-sm">
+            Showing all {totalElements} records
+          </div>
+        {/if}
+      {/if}
+    </div>
+  </div>
 {/if}
 
 <!-- Edit Account Book Modal -->

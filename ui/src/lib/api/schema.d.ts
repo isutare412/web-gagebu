@@ -63,6 +63,27 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/v1/account-books/{accountBookId}/categories': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Get categories for account book */
+    get: operations['getCategories'];
+    /**
+     * Replace categories for account book
+     * @description If a category is not included in the request, it will be deleted. New categories can be added by providing a null ID.
+     */
+    put: operations['updateCategories'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/v1/invitations/{invitationId}/join': {
     parameters: {
       query?: never;
@@ -254,6 +275,7 @@ export interface components {
       /** @example Hobby */
       name?: string;
       isBasic?: boolean;
+      isFallback?: boolean;
       /** Format: date-time */
       createdAt?: string;
       /** Format: date-time */
@@ -319,6 +341,26 @@ export interface components {
       createdAt?: string;
       /** Format: date-time */
       updatedAt?: string;
+    };
+    CategoryListUpdateRequest: {
+      /** @description List of categories to update */
+      categories: components['schemas']['CategoryUpdateRequest'][];
+    };
+    CategoryUpdateRequest: {
+      /**
+       * Format: uuid
+       * @description Category ID - null for new categories
+       */
+      id?: string;
+      /**
+       * @description Category name
+       * @example Food & Dining
+       */
+      name?: string;
+    };
+    CategoryListResponse: {
+      /** @description List of categories */
+      categories?: components['schemas']['CategoryView'][];
     };
     AccountBookCreateRequest: {
       /** @example My First Account Book */
@@ -695,6 +737,72 @@ export interface operations {
           [name: string]: unknown;
         };
         content?: never;
+      };
+      /** @description Error response */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+    };
+  };
+  getCategories: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        accountBookId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['CategoryListResponse'];
+        };
+      };
+      /** @description Error response */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+    };
+  };
+  updateCategories: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        accountBookId: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['CategoryListUpdateRequest'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['CategoryListResponse'];
+        };
       };
       /** @description Error response */
       default: {

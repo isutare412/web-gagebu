@@ -262,6 +262,71 @@ paths:
       security:
         - cookieTokenAuth: []
         - bearerTokenAuth: []
+  /api/v1/account-books/{accountBookId}/categories:
+    get:
+      tags:
+        - Category
+      summary: Get categories for account book
+      operationId: getCategories
+      parameters:
+        - name: accountBookId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/CategoryListResponse'
+        default:
+          description: Error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+        - cookieTokenAuth: []
+        - bearerTokenAuth: []
+    put:
+      tags:
+        - Category
+      summary: Replace categories for account book
+      description: "If a category is not included in the request, it will be deleted.\
+        \ New categories can be added by providing a null ID."
+      operationId: updateCategories
+      parameters:
+        - name: accountBookId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CategoryListUpdateRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/CategoryListResponse'
+        default:
+          description: Error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+        - cookieTokenAuth: []
+        - bearerTokenAuth: []
   /api/v1/invitations/{invitationId}/join:
     post:
       tags:
@@ -457,7 +522,6 @@ paths:
   /api/v1/account-books/{accountBookId}/invitations:
     get:
       tags:
-        - AccountBook
         - Invitation
       summary: List current valid invitations for an account book
       operationId: listInvitations
@@ -486,7 +550,6 @@ paths:
         - bearerTokenAuth: []
     post:
       tags:
-        - AccountBook
         - Invitation
       summary: Create an invitation for an account book
       operationId: createInvitation
@@ -569,7 +632,6 @@ paths:
   /api/v1/account-books/{accountBookId}/invitations/{invitationId}:
     delete:
       tags:
-        - AccountBook
         - Invitation
       summary: Delete an invitation
       operationId: deleteInvitation
@@ -683,6 +745,8 @@ components:
           example: Hobby
         isBasic:
           type: boolean
+        isFallback:
+          type: boolean
         createdAt:
           type: string
           format: date-time
@@ -784,6 +848,35 @@ components:
         updatedAt:
           type: string
           format: date-time
+    CategoryListUpdateRequest:
+      type: object
+      properties:
+        categories:
+          type: array
+          description: List of categories to update
+          items:
+            $ref: '#/components/schemas/CategoryUpdateRequest'
+      required:
+        - categories
+    CategoryUpdateRequest:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Category ID - null for new categories
+        name:
+          type: string
+          description: Category name
+          example: Food & Dining
+    CategoryListResponse:
+      type: object
+      properties:
+        categories:
+          type: array
+          description: List of categories
+          items:
+            $ref: '#/components/schemas/CategoryView'
     AccountBookCreateRequest:
       type: object
       properties:
