@@ -5,6 +5,7 @@
   import type { components } from '$lib/api/schema';
   import ConfirmModal from '$lib/components/ConfirmModal.svelte';
   import Loading from '$lib/components/Loading.svelte';
+  import RecordCard from '$lib/components/RecordCard.svelte';
   import { showApiErrorToast, showSuccessToast } from '$lib/stores/toast.svelte';
   import { isAuthenticated, userState } from '$lib/stores/user.svelte';
   import { formatDateISO, formatDateTimeISO } from '$lib/utils/date';
@@ -500,14 +501,13 @@
 {#if loading}
   <Loading size="lg" message="Loading account book..." />
 {:else if accountBook}
-  <div class="mx-auto max-w-4xl">
-    <!-- Breadcrumb -->
-    <div class="breadcrumbs mb-6 text-sm">
-      <ul>
-        <li><a href="/">Account Books</a></li>
-        <li>{accountBook.name}</li>
-      </ul>
-    </div>
+  <!-- Breadcrumb -->
+  <div class="breadcrumbs mb-6 text-sm">
+    <ul>
+      <li><a href="/">Account Books</a></li>
+      <li>{accountBook.name}</li>
+    </ul>
+  </div>
 
     <!-- Header -->
     <div class="mb-6 flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
@@ -691,126 +691,21 @@
         {:else}
           <div class="space-y-2">
             {#each records as record (record.id)}
-              <div
-                class="card bg-base-100 border-base-300 border shadow-sm transition-shadow hover:shadow-md"
-              >
-                <div class="card-body p-3 sm:p-4">
-                  <!-- Mobile Layout (< sm) -->
-                  <div class="sm:hidden">
-                    <!-- Summary and date at top -->
-                    <div class="mb-2">
-                      <h3 class="mb-1 text-base font-semibold">{record.summary}</h3>
-                      <div class="text-base-content/70 text-xs">
-                        {record.date ? formatDateISO(record.date) : 'No date'}
-                      </div>
-                    </div>
-
-                    <!-- User info, amount, and action button -->
-                    <div class="flex flex-wrap items-center justify-between gap-2">
-                      <div class="flex items-center gap-2">
-                        {#if record.userPictureUrl}
-                          <div class="avatar">
-                            <div class="h-8 w-8 rounded-full">
-                              <img
-                                src={record.userPictureUrl}
-                                alt={record.userNickname || 'User'}
-                              />
-                            </div>
-                          </div>
-                        {:else}
-                          <div
-                            class="bg-neutral text-neutral-content flex h-8 w-8 items-center justify-center rounded-full text-sm font-medium"
-                          >
-                            {record.userNickname?.charAt(0) || '?'}
-                          </div>
-                        {/if}
-                        <div class="text-base-content/70 flex items-center gap-2 text-sm">
-                          <span class="truncate">{record.userNickname}</span>
-                          <span>•</span>
-                          <span class="badge badge-outline badge-sm">{record.category}</span>
-                        </div>
-                      </div>
-                      <div class="ml-auto flex items-center gap-3">
-                        <div
-                          class="{record.recordType === 'INCOME'
-                            ? 'text-success'
-                            : 'text-error'} text-lg font-bold"
-                        >
-                          {record.recordType === 'INCOME'
-                            ? '+'
-                            : '-'}{record.amount?.toLocaleString()}
-                        </div>
-                        <a
-                          href="/account-books/{accountBookId}/records/{record.id}"
-                          class="btn btn-ghost btn-xs"
-                        >
-                          View
-                        </a>
-                      </div>
-                    </div>
-                  </div>
-
-                  <!-- Desktop Layout (≥ sm) -->
-                  <div class="hidden items-center justify-between gap-4 sm:flex">
-                    <div class="flex min-w-0 flex-1 items-center gap-3">
-                      <!-- User Avatar -->
-                      <div class="flex-shrink-0">
-                        {#if record.userPictureUrl}
-                          <div class="avatar">
-                            <div class="h-8 w-8 rounded-full">
-                              <img
-                                src={record.userPictureUrl}
-                                alt={record.userNickname || 'User'}
-                              />
-                            </div>
-                          </div>
-                        {:else}
-                          <div
-                            class="bg-neutral text-neutral-content flex h-8 w-8 items-center justify-center rounded-full text-sm font-medium"
-                          >
-                            {record.userNickname?.charAt(0) || '?'}
-                          </div>
-                        {/if}
-                      </div>
-
-                      <!-- Record Details -->
-                      <div class="min-w-0 flex-1">
-                        <div class="mb-1 flex items-center gap-2">
-                          <h3 class="truncate text-base font-semibold">{record.summary}</h3>
-                        </div>
-                        <div class="text-base-content/70 flex items-center gap-2 text-sm">
-                          <span class="truncate">{record.userNickname}</span>
-                          <span>•</span>
-                          <span class="badge badge-outline badge-sm">{record.category}</span>
-                          <span>•</span>
-                          <span class="text-xs"
-                            >{record.date ? formatDateISO(record.date) : 'No date'}</span
-                          >
-                        </div>
-                      </div>
-                    </div>
-
-                    <!-- Amount and Actions -->
-                    <div class="flex flex-shrink-0 items-center gap-3">
-                      <div
-                        class="{record.recordType === 'INCOME'
-                          ? 'text-success'
-                          : 'text-error'} text-lg font-bold"
-                      >
-                        {record.recordType === 'INCOME'
-                          ? '+'
-                          : '-'}{record.amount?.toLocaleString()}
-                      </div>
-                      <a
-                        href="/account-books/{accountBookId}/records/{record.id}"
-                        class="btn btn-ghost btn-sm"
-                      >
-                        View
-                      </a>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              <RecordCard
+                record={{
+                  id: record.id,
+                  summary: record.summary,
+                  date: record.date,
+                  recordType: record.recordType,
+                  amount: record.amount || 0,
+                  category: record.category,
+                  userNickname: record.userNickname,
+                  userPictureUrl: record.userPictureUrl,
+                }}
+                accountBookId={accountBookId}
+                showActions={true}
+                isPreview={false}
+              />
             {/each}
           </div>
 
@@ -902,7 +797,6 @@
         {/if}
       </div>
     </div>
-  </div>
 {/if}
 
 <!-- Edit Account Book Modal -->

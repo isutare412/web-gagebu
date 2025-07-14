@@ -37,6 +37,21 @@ Web-Gagebu is a full-stack account book application with:
     - Correct: `<button onclick={handleClick}>Click me</button>`
     - Incorrect: `<button on:click={handleClick}>Click me</button>`
     - Mixing syntaxes will cause compilation errors
+  - **Dynamic Elements**: Use `svelte:element` to avoid partial tag issues in conditional blocks
+    - Problem: `{#if condition}<button>...{:else}<div>...{/if}` causes "partial tag" compilation errors
+    - Solution: Use `svelte:element` with dynamic `this` attribute:
+    ```svelte
+    <script>
+      const elementType = $derived(isClickable ? 'button' : 'div');
+      const elementProps = $derived(isClickable ? { type: 'button', onclick: handler } : {});
+    </script>
+    <svelte:element this={elementType} {...elementProps} class="shared-styles">
+      <!-- content -->
+    </svelte:element>
+    ```
+    - Allows conditional element types without splitting template blocks
+    - Works with any HTML element or Svelte component
+    - Enables clean conditional styling and event handling
   - **Reactive State**: Use `$derived.by()` for complex derived values that require function bodies
     - Simple: `let count = $derived(items.length)`
     - Complex: `let isValid = $derived.by(() => { /* complex logic */ return result; })`

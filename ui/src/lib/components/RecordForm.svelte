@@ -1,7 +1,8 @@
 <script lang="ts">
   import type { components } from '$lib/api/schema';
   import Loading from '$lib/components/Loading.svelte';
-  import { formatDateISO } from '$lib/utils/date';
+  import RecordCard from '$lib/components/RecordCard.svelte';
+  import { userState } from '$lib/stores/user.svelte';
 
   type AccountBookView = components['schemas']['AccountBookView'];
 
@@ -132,13 +133,13 @@
       <legend class="fieldset-legend">Amount *</legend>
       <div class="relative">
         <span
-          class="text-base-content/70 pointer-events-none absolute top-1/2 left-3 z-10 -translate-y-1/2"
+          class="text-base-content/70 pointer-events-none absolute left-3 top-1/2 z-10 -translate-y-1/2"
           >₩</span
         >
         <input
           id="amount"
           type="text"
-          class="input input-bordered w-full [appearance:textfield] pl-8 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none {amountError
+          class="input input-bordered w-full pl-8 [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none {amountError
             ? 'input-error'
             : ''}"
           bind:value={formData.amount}
@@ -207,33 +208,23 @@
 
   <!-- Preview -->
   {#if showPreview}
-    <div class="card bg-base-200">
-      <div class="card-body p-3 sm:p-6">
-        <h3 class="card-title text-sm">Preview</h3>
-        <div class="flex items-center justify-between">
-          <div class="flex items-center gap-2">
-            <span class="badge badge-sm badge-outline text-sm">
-              {accountBook.categories?.find((c) => c.id === formData.categoryId)?.name ||
-                'Select category'}
-            </span>
-          </div>
-          <div
-            class="text-lg font-semibold {formData.recordType === 'INCOME'
-              ? 'text-success'
-              : 'text-error'}"
-          >
-            {formData.recordType === 'INCOME' ? '+' : '-'}{formData.amount
-              ? Number(formData.amount).toLocaleString()
-              : '0'}
-          </div>
-        </div>
-        {#if formData.summary}
-          <p class="text-base-content/80 text-sm">{formData.summary}</p>
-        {/if}
-        <p class="text-base-content/60 text-xs">
-          {formData.date ? formatDateISO(formData.date) : 'Select date'}
-        </p>
-      </div>
+    <div>
+      <h3 class="mb-3 text-sm font-semibold">Preview</h3>
+      <RecordCard
+        record={{
+          summary: formData.summary || 'Enter summary',
+          date: formData.date || '',
+          recordType: formData.recordType,
+          amount: formData.amount || '0',
+          category:
+            accountBook.categories?.find((c) => c.id === formData.categoryId)?.name ||
+            'Select category',
+          userNickname: userState.user?.nickname || 'You',
+          userPictureUrl: userState.user?.pictureUrl,
+        }}
+        showActions={false}
+        isPreview={true}
+      />
     </div>
   {/if}
 
