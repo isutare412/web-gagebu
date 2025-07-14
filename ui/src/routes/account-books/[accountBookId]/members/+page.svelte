@@ -75,7 +75,7 @@
     <!-- Members -->
     {#if accountBook.members && accountBook.members.length > 0}
       <div class="card bg-base-100 shadow-lg">
-        <div class="card-body">
+        <div class="card-body p-4 sm:p-6">
           <h2 class="card-title">Account Book Members</h2>
           <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
             {#each accountBook.members as member (member.id)}
@@ -113,7 +113,7 @@
       </div>
     {:else}
       <div class="card bg-base-100 shadow-lg">
-        <div class="card-body">
+        <div class="card-body p-4 sm:p-6">
           <div class="py-12 text-center">
             <div class="mb-4 text-6xl">👥</div>
             <h3 class="mb-2 text-xl font-semibold">No members found</h3>

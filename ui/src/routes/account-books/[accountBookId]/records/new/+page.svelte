@@ -171,7 +171,7 @@
 
     <!-- Form -->
     <div class="card bg-base-100 shadow-lg">
-      <div class="card-body">
+      <div class="card-body p-4 sm:p-6">
         <RecordForm
           {accountBook}
           bind:formData

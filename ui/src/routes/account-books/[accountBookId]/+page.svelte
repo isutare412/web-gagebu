@@ -551,7 +551,7 @@
 
     <!-- Filters -->
     <div class="card bg-base-100 mb-6 shadow-lg">
-      <div class="card-body">
+      <div class="card-body p-4 sm:p-6">
         <div class="flex items-center justify-between">
           <h2 class="card-title">Filters</h2>
           <button class="btn btn-ghost btn-sm" onclick={() => (showFilters = !showFilters)}>
@@ -656,7 +656,7 @@
 
     <!-- Records -->
     <div class="card bg-base-100 shadow-lg">
-      <div class="card-body">
+      <div class="card-body p-4 sm:p-6">
         <div class="flex items-center justify-between">
           <h2 class="card-title">Records</h2>
           <button

@@ -66,7 +66,7 @@
 {:else if userState.user}
   <div class="mx-auto max-w-4xl">
     <div class="card bg-base-100 shadow-xl">
-      <div class="card-body">
+      <div class="card-body p-4 sm:p-6">
         <div class="mb-6 flex items-center gap-4">
           <div class="avatar">
             <div class="w-24 rounded-full">

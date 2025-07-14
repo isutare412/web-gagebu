@@ -34,7 +34,7 @@
 
 <div class="bg-base-200 min-h-screen">
   <Navigation />
-  <main class="mx-auto max-w-4xl p-4">
+  <main class="mx-auto max-w-4xl p-3 sm:p-4">
     {#if userState.isLoading}
       <Loading size="lg" message="Loading application..." />
     {:else}

@@ -208,7 +208,7 @@
   <!-- Preview -->
   {#if showPreview}
     <div class="card bg-base-200">
-      <div class="card-body">
+      <div class="card-body p-3 sm:p-6">
         <h3 class="card-title text-sm">Preview</h3>
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-2">

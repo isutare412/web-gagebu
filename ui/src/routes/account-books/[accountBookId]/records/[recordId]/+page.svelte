@@ -247,7 +247,7 @@
 
     <!-- Record Details -->
     <div class="card bg-base-100 shadow-lg">
-      <div class="card-body">
+      <div class="card-body p-4 sm:p-6">
         <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
           <!-- Amount -->
           <div>
