@@ -11,6 +11,7 @@ public record CategoryView(
     String name,
 
     Boolean isBasic,
+    Boolean isFallback,
     ZonedDateTime createdAt,
     ZonedDateTime updatedAt
 ) {

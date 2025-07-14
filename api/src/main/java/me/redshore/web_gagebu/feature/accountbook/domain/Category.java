@@ -44,4 +44,7 @@ public class Category extends BaseEntity {
     @Column(nullable = false)
     private Boolean isBasic;
 
+    @Column(nullable = false)
+    private Boolean isFallback;
+
 }

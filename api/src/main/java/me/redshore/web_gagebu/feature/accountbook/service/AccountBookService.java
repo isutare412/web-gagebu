@@ -103,10 +103,11 @@ public class AccountBookService {
     private List<Category> buildDefaultCategories() {
         return this.categoryProperties.getDefaults()
                                       .stream()
-                                      .map(categoryName -> Category.builder()
-                                                                   .name(categoryName)
-                                                                   .isBasic(true)
-                                                                   .build())
+                                      .map(category -> Category.builder()
+                                                               .name(category.getName())
+                                                               .isBasic(true)
+                                                               .isFallback(category.getIsFallback())
+                                                               .build())
                                       .toList();
     }
 

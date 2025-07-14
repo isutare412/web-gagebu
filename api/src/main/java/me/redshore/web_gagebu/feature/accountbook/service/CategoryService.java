@@ -16,6 +16,7 @@ import me.redshore.web_gagebu.feature.accountbook.dto.CategoryUpdateCommand;
 import me.redshore.web_gagebu.feature.accountbook.mapping.CategoryMapper;
 import me.redshore.web_gagebu.feature.accountbook.repository.AccountBookRepository;
 import me.redshore.web_gagebu.feature.accountbook.repository.CategoryRepository;
+import me.redshore.web_gagebu.feature.accountbook.repository.RecordRepository;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,6 +27,7 @@ public class CategoryService {
 
     private final CategoryRepository categoryRepository;
     private final AccountBookRepository accountBookRepository;
+    private final RecordRepository recordRepository;
     private final CategoryMapper categoryMapper;
 
     @Transactional(readOnly = true)
@@ -47,31 +49,24 @@ public class CategoryService {
                 String.format("Account book with id %s not found", command.accountBookId())));
 
         // Get existing categories for this account book
-        final var existingCategories =
-            this.categoryRepository.findAllByAccountBookIdOrderByCreatedAtAsc(command.accountBookId())
-                                   .stream()
-                                   .collect(Collectors.toMap(Category::getId, Function.identity()));
+        final var existingCategories = this.categoryRepository
+            .findAllByAccountBookIdOrderByCreatedAtAsc(command.accountBookId())
+            .stream()
+            .collect(Collectors.toMap(Category::getId, Function.identity()));
 
         // Process category updates/creates
         final var processedCategoryIds = command.categories()
             .stream()
-            .map(
-                categoryRequest -> upsertCategory(categoryRequest, existingCategories, accountBook))
+            .map(categoryRequest ->
+                upsertCategory(categoryRequest, existingCategories, accountBook))
             .map(Category::getId)
             .toList();
 
         // Delete categories that are not in the request
         if (!processedCategoryIds.isEmpty()) {
-            // Delete only non-basic categories that are not in the request
-            this.categoryRepository.deleteAllByAccountBookIdAndIdNotInAndIsBasicFalse(
-                command.accountBookId(),
-                processedCategoryIds);
+            deleteUnprocessedCategories(command.accountBookId(), processedCategoryIds);
         } else {
-            // If no categories in request, delete all non-basic categories
-            this.categoryRepository.findAllByAccountBookIdOrderByCreatedAtAsc(command.accountBookId())
-                                   .stream()
-                                   .filter(category -> !category.getIsBasic())
-                                   .forEach(this.categoryRepository::delete);
+            deleteAllNonBasicNonFallbackCategories(command.accountBookId());
         }
 
         // Return updated list
@@ -91,6 +86,7 @@ public class CategoryService {
                                       .name(request.name())
                                       .accountBook(accountBook)
                                       .isBasic(false)
+                                      .isFallback(false)
                                       .build();
             return this.categoryRepository.save(newCategory);
         }
@@ -116,6 +112,66 @@ public class CategoryService {
         }
 
         return existingCategory;
+    }
+
+    private void deleteUnprocessedCategories(UUID accountBookId, List<UUID> processedCategoryIds) {
+        // Get categories to be deleted (non-basic, non-fallback categories not in the request)
+        final var categoryIdsToDelete = 
+            this.categoryRepository.findAllByAccountBookIdOrderByCreatedAtAsc(accountBookId)
+                                   .stream()
+                                   .filter(category ->
+                                        !category.getIsBasic() && 
+                                        !processedCategoryIds.contains(category.getId()))
+                                   .map(Category::getId)
+                                   .toList();
+
+        if (categoryIdsToDelete.isEmpty()) {
+            return;
+        }
+
+        // Update records to use fallback category before deleting
+        updateRecordsToFallbackCategory(accountBookId, categoryIdsToDelete);
+
+        // Delete only non-basic categories that are not in the request
+        this.categoryRepository.deleteAllByAccountBookIdAndIsBasicFalseAndIdNotIn(accountBookId,
+                                                                                    processedCategoryIds);
+    }
+
+    private void deleteAllNonBasicNonFallbackCategories(UUID accountBookId) {
+        // If no categories in request, get all non-basic, non-fallback categories to delete
+        final var categoryIdsToDelete = 
+            this.categoryRepository.findAllByAccountBookIdOrderByCreatedAtAsc(accountBookId)
+                                   .stream()
+                                   .filter(category ->
+                                        !category.getIsBasic() &&
+                                        !category.getIsFallback())
+                                   .map(Category::getId)
+                                   .toList();
+
+        if (categoryIdsToDelete.isEmpty()) {
+            return;
+        }
+
+        // Update records to use fallback category before deleting
+        updateRecordsToFallbackCategory(accountBookId, categoryIdsToDelete);
+
+        // Delete all non-basic categories
+        this.categoryRepository.deleteAllByAccountBookIdAndIsBasicFalse(accountBookId);
+    }
+
+    private void updateRecordsToFallbackCategory(UUID accountBookId, List<UUID> categoriesToDelete) {
+        if (categoriesToDelete.isEmpty()) {
+            return;
+        }
+
+        // Find the fallback category for this account book
+        final var fallbackCategory = this.categoryRepository
+            .findByAccountBookIdAndIsFallbackTrue(accountBookId)
+            .orElseThrow(() -> new AppException(ErrorCode.INTERNAL_SERVER_ERROR,
+                String.format("No fallback category found for account book %s", accountBookId)));
+
+        // Update all records using the categories to be deleted to use the fallback category
+        this.recordRepository.updateCategoryToFallbackBatch(categoriesToDelete, fallbackCategory.getId());
     }
 
 }

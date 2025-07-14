@@ -1,6 +1,7 @@
 package me.redshore.web_gagebu.feature.accountbook.repository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import me.redshore.web_gagebu.feature.accountbook.domain.Category;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -17,9 +18,10 @@ public interface CategoryRepository extends JpaRepository<Category, UUID> {
 
     List<Category> findAllByAccountBookIdOrderByCreatedAtAsc(UUID accountBookId);
 
-    void deleteAllByAccountBookIdAndIdNotIn(UUID accountBookId, List<UUID> categoryIds);
+    void deleteAllByAccountBookIdAndIsBasicFalse(UUID accountBookId);
 
-    void deleteAllByAccountBookIdAndIdNotInAndIsBasicFalse(UUID accountBookId,
-                                                           List<UUID> categoryIds);
+    void deleteAllByAccountBookIdAndIsBasicFalseAndIdNotIn(UUID accountBookId, List<UUID> categoryIds);
+
+    Optional<Category> findByAccountBookIdAndIsFallbackTrue(UUID accountBookId);
 
 }

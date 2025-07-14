@@ -67,12 +67,12 @@ app:
 
   category:
     defaults:
-      - "Etc"
-      - "Food"
-      - "Transport"
-      - "Health"
-      - "Entertainment"
-      - "Shopping"
+      - name: "Food"
+      - name: "Transport"
+      - name: "Health"
+      - name: "Shopping"
+      - name: "Etc"
+        is-fallback: true
 
   cors:
     allowed-origins:
