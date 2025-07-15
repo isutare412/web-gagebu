@@ -223,6 +223,11 @@
     });
   });
 
+  // Check if any category has blank/empty name
+  let hasBlankCategories = $derived.by(() => {
+    return editingCategories.some((category) => !category.name || !category.name.trim());
+  });
+
   onMount(() => {
     if (!isAuthenticated()) {
       goto('/');
@@ -265,7 +270,7 @@
           <button
             class="btn btn-primary"
             onclick={saveCategories}
-            disabled={!hasUnsavedChanges || saving}
+            disabled={!hasUnsavedChanges || saving || hasBlankCategories}
           >
             {#if saving}
               <span class="loading loading-spinner loading-sm"></span>

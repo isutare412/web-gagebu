@@ -36,6 +36,7 @@ public class AccountBook extends BaseEntity {
     private String name;
 
     @OneToMany(mappedBy = "accountBook", orphanRemoval = true, cascade = {CascadeType.PERSIST})
+    @OrderBy("createdAt ASC")
     @Builder.Default
     private List<Member> members = new ArrayList<>();
 
