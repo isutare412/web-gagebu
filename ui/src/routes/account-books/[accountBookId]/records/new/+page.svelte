@@ -94,10 +94,6 @@
 
       if (response.data?.id) {
         showSuccessToast('Record created successfully');
-        goto(`/account-books/${accountBookId}/records/${response.data.id}`);
-      } else if (response.data) {
-        // Record created but no ID returned, still a success
-        showSuccessToast('Record created successfully');
         goto(`/account-books/${accountBookId}`);
       } else {
         // No data returned, treat as error

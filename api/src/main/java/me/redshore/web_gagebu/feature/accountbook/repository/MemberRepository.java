@@ -13,8 +13,7 @@ public interface MemberRepository extends JpaRepository<Member, UUID> {
 
     boolean existsByAccountBookIdAndUserId(UUID accountBookId, UUID userId);
 
-    boolean existsByAccountBookIdAndUserIdAndRole(UUID accountBookId, UUID userId,
-                                                  MemberRole role);
+    boolean existsByAccountBookIdAndUserIdAndRole(UUID accountBookId, UUID userId, MemberRole role);
 
     List<Member> findAllByUserId(UUID userId);
 
