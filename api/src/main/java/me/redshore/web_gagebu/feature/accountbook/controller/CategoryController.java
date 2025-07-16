@@ -35,7 +35,7 @@ public class CategoryController {
     @GetMapping("/account-books/{accountBookId}/categories")
     @Operation(summary = "Get categories for account book")
     public CategoryListResponse getCategories(@PathVariable UUID accountBookId) {
-        final var categoryDtos = this.categoryService.getCategories(accountBookId);
+        final var categoryDtos = this.categoryService.listCategories(accountBookId);
         final var categoryViews = categoryDtos.stream()
                                               .map(this.categoryMapper::toView)
                                               .toList();

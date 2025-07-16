@@ -63,6 +63,24 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/v1/account-books/{accountBookId}/members/{memberId}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Get member by ID */
+    get: operations['getMember'];
+    /** Update member role */
+    put: operations['updateMember'];
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/v1/account-books/{accountBookId}/categories': {
     parameters: {
       query?: never;
@@ -209,6 +227,23 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/v1/account-books/{accountBookId}/members': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** List members */
+    get: operations['listMembers'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/v1/account-books/{accountBookId}/invitations/{invitationId}': {
     parameters: {
       query?: never;
@@ -264,6 +299,8 @@ export interface components {
       name?: string;
       members?: components['schemas']['MemberView'][];
       categories?: components['schemas']['CategoryView'][];
+      /** Format: uuid */
+      createdBy?: string;
       /** Format: date-time */
       createdAt?: string;
       /** Format: date-time */
@@ -341,6 +378,10 @@ export interface components {
       createdAt?: string;
       /** Format: date-time */
       updatedAt?: string;
+    };
+    MemberUpdateRequest: {
+      /** @enum {string} */
+      role?: 'OWNER' | 'PARTICIPANT';
     };
     CategoryListUpdateRequest: {
       /** @description List of categories to update */
@@ -446,6 +487,9 @@ export interface components {
       createdAt?: string;
       /** Format: date-time */
       updatedAt?: string;
+    };
+    MemberListResponse: {
+      members?: components['schemas']['MemberView'][];
     };
     InvitationListResponose: {
       invitations?: components['schemas']['InvitationView'][];
@@ -737,6 +781,74 @@ export interface operations {
           [name: string]: unknown;
         };
         content?: never;
+      };
+      /** @description Error response */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+    };
+  };
+  getMember: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        accountBookId: string;
+        memberId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['MemberView'];
+        };
+      };
+      /** @description Error response */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+    };
+  };
+  updateMember: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        accountBookId: string;
+        memberId: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['MemberUpdateRequest'];
+      };
+    };
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['MemberView'];
+        };
       };
       /** @description Error response */
       default: {
@@ -1116,6 +1228,37 @@ export interface operations {
           [name: string]: unknown;
         };
         content?: never;
+      };
+      /** @description Error response */
+      default: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ErrorResponse'];
+        };
+      };
+    };
+  };
+  listMembers: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        accountBookId: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description OK */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          '*/*': components['schemas']['MemberListResponse'];
+        };
       };
       /** @description Error response */
       default: {

@@ -262,6 +262,81 @@ paths:
       security:
         - cookieTokenAuth: []
         - bearerTokenAuth: []
+  /api/v1/account-books/{accountBookId}/members/{memberId}:
+    get:
+      tags:
+        - Member
+      summary: Get member by ID
+      operationId: getMember
+      parameters:
+        - name: accountBookId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: memberId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/MemberView'
+        default:
+          description: Error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+        - cookieTokenAuth: []
+        - bearerTokenAuth: []
+    put:
+      tags:
+        - Member
+      summary: Update member role
+      operationId: updateMember
+      parameters:
+        - name: accountBookId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: memberId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MemberUpdateRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/MemberView'
+        default:
+          description: Error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+        - cookieTokenAuth: []
+        - bearerTokenAuth: []
   /api/v1/account-books/{accountBookId}/categories:
     get:
       tags:
@@ -629,6 +704,35 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+  /api/v1/account-books/{accountBookId}/members:
+    get:
+      tags:
+        - Member
+      summary: List members
+      operationId: listMembers
+      parameters:
+        - name: accountBookId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/MemberListResponse'
+        default:
+          description: Error response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+      security:
+        - cookieTokenAuth: []
+        - bearerTokenAuth: []
   /api/v1/account-books/{accountBookId}/invitations/{invitationId}:
     delete:
       tags:
@@ -728,6 +832,9 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/CategoryView'
+        createdBy:
+          type: string
+          format: uuid
         createdAt:
           type: string
           format: date-time
@@ -848,6 +955,14 @@ components:
         updatedAt:
           type: string
           format: date-time
+    MemberUpdateRequest:
+      type: object
+      properties:
+        role:
+          type: string
+          enum:
+            - OWNER
+            - PARTICIPANT
     CategoryListUpdateRequest:
       type: object
       properties:
@@ -1011,6 +1126,13 @@ components:
         updatedAt:
           type: string
           format: date-time
+    MemberListResponse:
+      type: object
+      properties:
+        members:
+          type: array
+          items:
+            $ref: '#/components/schemas/MemberView'
     InvitationListResponose:
       type: object
       properties:

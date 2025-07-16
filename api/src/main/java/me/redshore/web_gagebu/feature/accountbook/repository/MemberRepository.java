@@ -17,6 +17,8 @@ public interface MemberRepository extends JpaRepository<Member, UUID> {
 
     List<Member> findAllByUserId(UUID userId);
 
+    List<Member> findAllByAccountBookId(UUID accountBookId);
+
     Optional<Member> findByAccountBookIdAndUserId(UUID accountBookId, UUID userId);
 
 }

@@ -32,7 +32,7 @@ public class CategoryService {
 
     @Transactional(readOnly = true)
     @PreAuthorize("hasRole('ADMIN') or @accountBookAuthorizer.canAccess(#accountBookId)")
-    public List<CategoryDto> getCategories(UUID accountBookId) {
+    public List<CategoryDto> listCategories(UUID accountBookId) {
         return this.categoryRepository.findAllByAccountBookIdOrderByCreatedAtAsc(accountBookId)
                                       .stream()
                                       .map(this.categoryMapper::toDto)

@@ -14,6 +14,7 @@ type RecordCreateRequest = components['schemas']['RecordCreateRequest'];
 type RecordUpdateRequest = components['schemas']['RecordUpdateRequest'];
 type CategoryListUpdateRequest = components['schemas']['CategoryListUpdateRequest'];
 type CategoryUpdateRequest = components['schemas']['CategoryUpdateRequest'];
+type MemberUpdateRequest = components['schemas']['MemberUpdateRequest'];
 
 type RecordListParams = {
   page: number;
@@ -91,6 +92,21 @@ export const api = {
       body: data,
     }),
 
+  // Member APIs
+  listMembers: (accountBookId: string) =>
+    apiClient.GET('/api/v1/account-books/{accountBookId}/members', {
+      params: { path: { accountBookId } },
+    }),
+  getMember: (accountBookId: string, memberId: string) =>
+    apiClient.GET('/api/v1/account-books/{accountBookId}/members/{memberId}', {
+      params: { path: { accountBookId, memberId } },
+    }),
+  updateMember: (accountBookId: string, memberId: string, data: MemberUpdateRequest) =>
+    apiClient.PUT('/api/v1/account-books/{accountBookId}/members/{memberId}', {
+      params: { path: { accountBookId, memberId } },
+      body: data,
+    }),
+
   // Invitation APIs
   listInvitations: (accountBookId: string) =>
     apiClient.GET('/api/v1/account-books/{accountBookId}/invitations', {
@@ -120,6 +136,7 @@ export type {
   AccountBookUpdateRequest,
   CategoryListUpdateRequest,
   CategoryUpdateRequest,
+  MemberUpdateRequest,
   RecordCreateRequest,
   RecordListParams,
   RecordUpdateRequest,
