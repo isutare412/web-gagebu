@@ -237,6 +237,7 @@
     : ''}
   confirmText={confirmAction?.newRole === 'OWNER' ? 'Promote' : 'Demote'}
   cancelText="Cancel"
+  confirmButtonClass="btn-primary"
   loading={confirmAction ? updatingMember === confirmAction.member.id : false}
   onConfirm={confirmRoleUpdate}
   onCancel={cancelRoleUpdate}

@@ -7,6 +7,7 @@
     message,
     confirmText = 'Delete',
     cancelText = 'Cancel',
+    confirmButtonClass = 'btn-error',
     loading = false,
     onConfirm,
     onCancel,
@@ -16,6 +17,7 @@
     message: string;
     confirmText?: string;
     cancelText?: string;
+    confirmButtonClass?: string;
     loading?: boolean;
     onConfirm: () => void;
     onCancel: () => void;
@@ -41,7 +43,7 @@
         <button class="btn" onclick={handleCancel} disabled={loading}>
           {cancelText}
         </button>
-        <button class="btn btn-error" onclick={handleConfirm} disabled={loading}>
+        <button class="btn {confirmButtonClass}" onclick={handleConfirm} disabled={loading}>
           {#if loading}
             <Loading size="sm" />
           {/if}
