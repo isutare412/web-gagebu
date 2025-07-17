@@ -38,10 +38,8 @@ spec:
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           args:
-            - "--spring.profiles.active"
-            - {{ .Values.config.spring.profiles.active }}
-            - "--spring.config.additional-location"
-            - "file:/config/application-{{ .Values.config.spring.profiles.active }}.yaml"
+            - "--spring.profiles.active={{ .Values.config.spring.profiles.active }}"
+            - "--spring.config.additional-location=file:/app/configs/application-{{ .Values.config.spring.profiles.active }}.yaml"
           ports:
             - name: http
               containerPort: {{ .Values.config.server.port }}
