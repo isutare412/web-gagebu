@@ -511,14 +511,14 @@
 
   <!-- Header -->
   <div class="mb-6 flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
-    <div>
-      <h1 class="text-3xl font-bold">{accountBook.name}</h1>
+    <div class="min-w-0 flex-1 md:flex-shrink">
+      <h1 class="text-3xl font-bold break-words">{accountBook.name}</h1>
       <p class="text-base-content/70">
         {accountBook.members?.length || 0} members • {totalElements} records
       </p>
     </div>
 
-    <div class="flex gap-2 self-end">
+    <div class="flex gap-2 self-end md:flex-shrink-0">
       <div class="dropdown sm:dropdown-end">
         <div tabindex="0" role="button" class="btn btn-sm sm:btn-md">⚙️ Options</div>
         <!-- svelte-ignore a11y_no_noninteractive_tabindex -->

@@ -74,36 +74,36 @@
         </div>
       </div>
 
-      <!-- User info, category and amount -->
-      <div class="flex flex-wrap items-center justify-between gap-2">
-        <div class="flex items-center gap-2">
-          {#if record.userPictureUrl}
-            <div class="avatar">
-              <div class="h-8 w-8 rounded-full">
-                <img src={record.userPictureUrl} alt={record.userNickname || 'User'} />
-              </div>
+      <!-- User info and category -->
+      <div class="mb-2 flex items-center gap-2">
+        {#if record.userPictureUrl}
+          <div class="avatar flex-shrink-0">
+            <div class="h-8 w-8 rounded-full">
+              <img src={record.userPictureUrl} alt={record.userNickname || 'User'} />
             </div>
-          {:else}
-            <div
-              class="bg-neutral text-neutral-content flex h-8 w-8 items-center justify-center rounded-full text-sm font-medium"
-            >
-              {record.userNickname?.charAt(0) || '?'}
-            </div>
-          {/if}
-          <div class="text-base-content/70 flex items-center gap-2 text-sm">
-            <span class="truncate">{record.userNickname || 'User'}</span>
-            <span>•</span>
-            <span class="badge badge-outline badge-sm">{record.category || 'No category'}</span>
           </div>
-        </div>
-        <div class="ml-auto flex items-center gap-3">
+        {:else}
           <div
-            class="{record.recordType === 'INCOME'
-              ? 'text-success'
-              : 'text-error'} text-lg font-bold transition-transform duration-200 group-hover:scale-105"
+            class="bg-neutral text-neutral-content flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full text-sm font-medium"
           >
-            {record.recordType === 'INCOME' ? '+' : '-'}{displayAmount?.toLocaleString() || '0'}
+            {record.userNickname?.charAt(0) || '?'}
           </div>
+        {/if}
+        <div class="text-base-content/70 flex min-w-0 flex-1 items-center gap-2 text-sm">
+          <span class="min-w-0 truncate">{record.userNickname || 'User'}</span>
+          <span class="flex-shrink-0">•</span>
+          <span class="badge badge-outline badge-sm flex-shrink-0">{record.category || 'No category'}</span>
+        </div>
+      </div>
+
+      <!-- Amount -->
+      <div class="flex justify-end">
+        <div
+          class="{record.recordType === 'INCOME'
+            ? 'text-success'
+            : 'text-error'} text-lg font-bold transition-transform duration-200 group-hover:scale-105"
+        >
+          {record.recordType === 'INCOME' ? '+' : '-'}{displayAmount?.toLocaleString() || '0'}
         </div>
       </div>
     </div>
@@ -137,12 +137,12 @@
               {record.summary || 'No summary'}
             </h3>
           </div>
-          <div class="text-base-content/70 flex items-center gap-2 text-sm">
-            <span class="truncate">{record.userNickname || 'User'}</span>
-            <span>•</span>
-            <span class="badge badge-outline badge-sm">{record.category || 'No category'}</span>
-            <span>•</span>
-            <span class="text-xs">
+          <div class="text-base-content/70 flex min-w-0 items-center gap-2 text-sm">
+            <span class="min-w-0 truncate">{record.userNickname || 'User'}</span>
+            <span class="flex-shrink-0">•</span>
+            <span class="badge badge-outline badge-sm flex-shrink-0 whitespace-nowrap">{record.category || 'No category'}</span>
+            <span class="flex-shrink-0">•</span>
+            <span class="text-xs flex-shrink-0">
               {record.date ? formatDateISO(record.date) : 'No date'}
             </span>
           </div>
