@@ -1,0 +1,135 @@
+# Default values for webgagebu-api.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+image:
+  repository: redshoore/webgagebu-api
+  pullPolicy: Always
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: ""
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: false
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+podAnnotations: {}
+podLabels: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+service:
+  type: ClusterIP
+  port: 80
+
+resources:
+  limits:
+    cpu: 500m
+    memory: 512Mi
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+config:
+  spring:
+    application:
+      name: web-gagebu-api
+    profiles:
+      active: default
+    threads:
+      virtual:
+        enabled: true
+    mvc:
+      log-resolved-exception: false
+    datasource:
+      url: jdbc:postgresql://localhost:42300/web_gagebu
+      username: admin
+      password: admin123123
+      driver-class-name: org.postgresql.Driver
+    jpa:
+      hibernate:
+        ddl-auto: update
+      properties:
+        hibernate:
+          '[format_sql]': false
+      show-sql: false
+      open-in-view: false
+    security:
+      oauth2:
+        client:
+          registration:
+            google:
+              client-id: <GOOGLE_CLIENT_ID>
+              client-secret: <GOOGLE_CLIENT_SECRET>
+              redirect-uri: "{baseUrl}/api/v1/oauth2/code/google"
+              scope:
+                - openid
+                - profile
+                - email
+  server:
+    port: 8080
+    forward-headers-strategy: framework
+  logging:
+    config: classpath:log4j2-spring.xml
+  app:
+    encryption:
+      key: <ENCRYPTION_KEY>
+    auth:
+      jwt:
+        private-key: |
+          <PKCS8_PRIVATE_KEY>
+        public-key: |
+          <PUBLIC_KEY>
+        expiration: 7d
+        renewal: 1d
+    invitation:
+      expiration: 7d
+      cleanup:
+        rate: 5m
+    category:
+      defaults:
+        - name: "Food"
+        - name: "Transport"
+        - name: "Health"
+        - name: "Shopping"
+        - name: "Etc"
+          is-fallback: true
+    cors:
+      allowed-origins:
+        - "http://localhost:*"
+        - "https://localhost:*"
+      allowed-methods:
+        - "*"
+      allowed-headers:
+        - "*"
+      allow-credentials: true
+      path-pattern: "/**"

@@ -1,0 +1,10 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: {{ include "webgagebu-api.fullname" . }}
+  labels:
+    {{- include "webgagebu-api.labels" . | nindent 4 }}
+data:
+  application-{{ .Values.config.spring.profiles.active }}.yaml: |
+    {{- toYaml .Values.config | nindent 4 }}
+
